@@ -122,7 +122,7 @@ proc drawTransition =
   # Draw transition effect (full-screen rectangle)
   drawRectangle(0, 0, getScreenWidth(), getScreenHeight(), fade(Black, transAlpha))
 
-proc updateDrawFrame =
+proc updateDrawFrame {.cdecl.} =
   # Update and draw game frame
   # Update
   # --------------------------------------------------------------------------------------
