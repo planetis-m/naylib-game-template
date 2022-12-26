@@ -23,7 +23,7 @@
 #
 # ****************************************************************************************
 
-import raylib
+import raylib, screens
 
 # ----------------------------------------------------------------------------------------
 # Module Variables Definition (local)
@@ -57,12 +57,13 @@ proc drawTitleScreen* =
   # Title Screen Draw logic
   # TODO: Draw TITLE screen here!
   drawRectangle(0, 0, getScreenWidth(), getScreenHeight(), Green)
-  drawText(font, "TITLE SCREEN", Vector2(x: 20, y: 10), font.baseSize * 3'f32, 4, DarkGreen)
+  drawText(font, "TITLE SCREEN", Vector2(x: 20, y: 10), font.baseSize*3'f32, 4, DarkGreen)
   drawText("PRESS ENTER or TAP to JUMP to GAMEPLAY SCREEN", 120, 220, 20, DarkGreen)
 
 proc unloadTitleScreen* =
   # Title Screen Unload logic
   # TODO: Unload TITLE screen variables here!
+  discard
 
 proc finishTitleScreen*: int32 =
   # Title Screen should finish?

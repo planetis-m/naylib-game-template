@@ -12,18 +12,8 @@
 #
 # ****************************************************************************************
 
-import raylib, screen_logo, screen_title, screen_options, screen_gameplay, screen_ending
-
-# ----------------------------------------------------------------------------------------
-# Shared Variables Definition (global)
-# NOTE: Those variables are shared between modules through screens.h
-# ----------------------------------------------------------------------------------------
-
-var
-  currentScreen: GameScreen = Logo
-  font: Font
-  music: Music
-  fxCoin: Sound
+import
+  raylib, screens, screen_logo, screen_title, screen_options, screen_gameplay, screen_ending
 
 # ----------------------------------------------------------------------------------------
 # Local Variables Definition (local to this module)
