@@ -55,12 +55,13 @@ proc drawEndingScreen* =
   # Ending Screen Draw logic
   # TODO: Draw ENDING screen here!
   drawRectangle(0, 0, getScreenWidth(), getScreenHeight(), Blue)
-  drawTextEx(font, "ENDING SCREEN", Vector2(x: 20, y: 10), font.baseSize*3'f32, 4, DarkBlue)
+  drawText(font, "ENDING SCREEN", Vector2(x: 20, y: 10), font.baseSize*3'f32, 4, DarkBlue)
   drawText("PRESS ENTER or TAP to RETURN to TITLE SCREEN", 120, 220, 20, DarkBlue)
 
 proc unloadEndingScreen* =
   # Ending Screen Unload logic
   # TODO: Unload ENDING screen variables here!
+  discard
 
 proc finishEndingScreen*: int32 =
   # Ending Screen should finish?

@@ -46,14 +46,17 @@ proc initOptionsScreen* =
 proc updateOptionsScreen* =
   # Options Screen Update logic
   # TODO: Update OPTIONS screen variables here!
+  discard
 
 proc drawOptionsScreen* =
   # Options Screen Draw logic
   # TODO: Draw OPTIONS screen here!
+  discard
 
 proc unloadOptionsScreen* =
   # Options Screen Unload logic
   # TODO: Unload OPTIONS screen variables here!
+  discard
 
 proc finishOptionsScreen*: int32 =
   # Options Screen should finish?

@@ -55,12 +55,13 @@ proc drawGameplayScreen* =
   # Gameplay Screen Draw logic
   # TODO: Draw GAMEPLAY screen here!
   drawRectangle(0, 0, getScreenWidth(), getScreenHeight(), Purple)
-  drawTextEx(font, "GAMEPLAY SCREEN", Vector2(x: 20, y: 10), font.baseSize*3'f32, 4, Maroon)
+  drawText(font, "GAMEPLAY SCREEN", Vector2(x: 20, y: 10), font.baseSize*3'f32, 4, Maroon)
   drawText("PRESS ENTER or TAP to JUMP to ENDING SCREEN", 130, 220, 20, Maroon)
 
 proc unloadGameplayScreen* =
   # Gameplay Screen Unload logic
   # TODO: Unload GAMEPLAY screen variables here!
+  discard
 
 proc finishGameplayScreen*: int32 =
   # Gameplay Screen should finish?

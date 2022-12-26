@@ -81,7 +81,7 @@ proc updateLogoScreen* =
   elif state == 3:               # State 3: "raylib" text-write animation logic
     inc(framesCounter)
     if lettersCount < 10:        # When all letters have appeared, just fade out everything
-      if framesCounter div 12:
+      if framesCounter div 12 > 0:
         inc(lettersCount)
         framesCounter = 0
     else:
@@ -95,7 +95,7 @@ proc updateLogoScreen* =
 proc drawLogoScreen* =
   # Logo Screen Draw logic
   if state == 0:
-    if (framesCounter div 10) mod 2:
+    if (framesCounter div 10) mod 2 > 0:
       drawRectangle(logoPositionX, logoPositionY, 16, 16, Black)
   elif state == 1:               # Draw bars animation: top and left
     drawRectangle(logoPositionX, logoPositionY, topSideRecWidth, 16, Black)
@@ -106,18 +106,19 @@ proc drawLogoScreen* =
     drawRectangle(logoPositionX + 240, logoPositionY, 16, rightSideRecHeight, Black)
     drawRectangle(logoPositionX, logoPositionY + 240, bottomSideRecWidth, 16, Black)
   elif state == 3:               # Draw "raylib" text-write animation + "powered by"
-    drawRectangle(logoPositionX, logoPositionY, topSideRecWidth, 16, fade(Black, Alpha))
-    drawRectangle(logoPositionX, logoPositionY + 16, 16, leftSideRecHeight - 32, fade(Black, Alpha))
-    drawRectangle(logoPositionX + 240, logoPositionY + 16, 16, rightSideRecHeight - 32, fade(Black, Alpha))
-    drawRectangle(logoPositionX, logoPositionY + 240, bottomSideRecWidth, 16, fade(Black, Alpha))
-    drawRectangle(getScreenWidth() div 2 - 112, getScreenHeight() div 2 - 112, 224, 224, fade(RayWhite, Alpha))
-    drawText(textSubtext("raylib", 0, lettersCount), getScreenWidth() div 2 - 44, getScreenHeight() div 2 + 48, 50, fade(Black, Alpha))
+    drawRectangle(logoPositionX, logoPositionY, topSideRecWidth, 16, fade(Black, alpha))
+    drawRectangle(logoPositionX, logoPositionY + 16, 16, leftSideRecHeight - 32, fade(Black, alpha))
+    drawRectangle(logoPositionX + 240, logoPositionY + 16, 16, rightSideRecHeight - 32, fade(Black, alpha))
+    drawRectangle(logoPositionX, logoPositionY + 240, bottomSideRecWidth, 16, fade(Black, alpha))
+    drawRectangle(getScreenWidth() div 2 - 112, getScreenHeight() div 2 - 112, 224, 224, fade(RayWhite, alpha))
+    drawText(substr("raylib", 0, lettersCount-1), getScreenWidth() div 2 - 44, getScreenHeight() div 2 + 48, 50, fade(Black, alpha))
     if framesCounter > 20:
-      drawText("powered by", logoPositionX, logoPositionY - 27, 20, fade(DarkGray, Alpha))
+      drawText("powered by", logoPositionX, logoPositionY - 27, 20, fade(DarkGray, alpha))
 
 proc unloadLogoScreen* =
   # Logo Screen Unload logic
   # Unload LOGO screen variables here!
+  discard
 
 proc finishLogoScreen*: int32 =
   # Logo Screen should finish?

@@ -57,8 +57,7 @@ proc drawTitleScreen* =
   # Title Screen Draw logic
   # TODO: Draw TITLE screen here!
   drawRectangle(0, 0, getScreenWidth(), getScreenHeight(), Green)
-  var pos: Vector2 = [20, 10]
-  drawTextEx(font, "TITLE SCREEN", pos, font.baseSize * 3.0f, 4, DarkGreen)
+  drawText(font, "TITLE SCREEN", Vector2(x: 20, y: 10), font.baseSize * 3'f32, 4, DarkGreen)
   drawText("PRESS ENTER or TAP to JUMP to GAMEPLAY SCREEN", 120, 220, 20, DarkGreen)
 
 proc unloadTitleScreen* =
