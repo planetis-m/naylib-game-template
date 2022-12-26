@@ -223,9 +223,9 @@ proc main =
   else:
     discard
   # Unload global data loaded
-  unloadFont(font)
-  unloadMusicStream(music)
-  unloadSound(fxCoin)
+  reset(font)
+  reset(music)
+  reset(fxCoin)
   closeAudioDevice() # Close audio context
   closeWindow() # Close window and OpenGL context
   # --------------------------------------------------------------------------------------
