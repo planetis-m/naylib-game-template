@@ -36,10 +36,10 @@ var
 # Module specific Functions Definition
 # ----------------------------------------------------------------------------------------
 
-proc changeToScreen(screen: GameScreen) =
+proc changeToScreen() =
   # Change to next screen, no transition
   # Unload current screen
-  case currentScreen
+  case transFromScreen
   of Logo:
     unloadLogoScreen()
   of Title:
@@ -51,7 +51,7 @@ proc changeToScreen(screen: GameScreen) =
   else:
     discard
   # Init next screen
-  case screen
+  case transToScreen
   of Logo:
     initLogoScreen()
   of Title:
@@ -62,7 +62,7 @@ proc changeToScreen(screen: GameScreen) =
     initEndingScreen()
   else:
     discard
-  currentScreen = screen
+  currentScreen = transToScreen
 
 proc transitionToScreen(screen: GameScreen) =
   # Request transition to next screen
@@ -80,33 +80,7 @@ proc updateTransition =
     # For that reason we compare against 1.01f, to avoid last frame loading stop
     if transAlpha > 1.01'f32:
       transAlpha = 1
-      # Unload current screen
-      case transFromScreen
-      of Logo:
-        unloadLogoScreen()
-      of Title:
-        unloadTitleScreen()
-      of Options:
-        unloadOptionsScreen()
-      of Gameplay:
-        unloadGameplayScreen()
-      of Ending:
-        unloadEndingScreen()
-      else:
-        discard
-      # Load next screen
-      case transToScreen
-      of Logo:
-        initLogoScreen()
-      of Title:
-        initTitleScreen()
-      of Gameplay:
-        initGameplayScreen()
-      of Ending:
-        initEndingScreen()
-      else:
-        discard
-      currentScreen = transToScreen
+      changeToScreen()
       # Activate fade out effect to next loaded screen
       transFadeOut = true
   else:
