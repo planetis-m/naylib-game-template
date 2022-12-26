@@ -26,10 +26,10 @@ const
 # Required variables to manage screen transitions (fade-in, fade-out)
 
 var
-  transAlpha = 0
-  onTransition = false
-  transFadeOut = false
-  transFromScreen = -1
+  transAlpha: float32 = 0
+  onTransition: bool = false
+  transFadeOut: bool = false
+  transFromScreen: GameScreen = Unknown
   transToScreen: GameScreen = Unknown
 
 # ----------------------------------------------------------------------------------------
@@ -79,7 +79,7 @@ proc updateTransition =
     # NOTE: Due to float internal representation, condition jumps on 1.0f instead of 1.05f
     # For that reason we compare against 1.01f, to avoid last frame loading stop
     if transAlpha > 1.01'f32:
-      transAlpha = 1'f32
+      transAlpha = 1
       # Unload current screen
       case transFromScreen
       of Logo:
@@ -115,7 +115,7 @@ proc updateTransition =
       transAlpha = 0
       transFadeOut = false
       onTransition = false
-      transFromScreen = -1
+      transFromScreen = Unknown
       transToScreen = Unknown
 
 proc drawTransition =
@@ -132,7 +132,7 @@ proc updateDrawFrame =
     case currentScreen
     of Logo:
       updateLogoScreen()
-      if finishLogoScreen():
+      if finishLogoScreen() == 1:
         transitionToScreen(Title)
     of Title:
       updateTitleScreen()
@@ -142,7 +142,7 @@ proc updateDrawFrame =
         transitionToScreen(Gameplay)
     of Options:
       updateOptionsScreen()
-      if finishOptionsScreen():
+      if finishOptionsScreen() == 1:
         transitionToScreen(Title)
     of Gameplay:
       updateGameplayScreen()
