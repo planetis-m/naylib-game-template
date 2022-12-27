@@ -47,7 +47,7 @@ proc updateEndingScreen* =
   # Ending Screen Update logic
   # TODO: Update ENDING screen variables here!
   # Press enter or tap to return to TITLE screen
-  if isKeyPressed(KeyEnter) or isGestureDetected(GestureTap):
+  if isKeyPressed(Enter) or isGestureDetected(Tap):
     finishScreen = 1
     playSound(fxCoin)
 

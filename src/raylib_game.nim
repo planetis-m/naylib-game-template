@@ -188,44 +188,45 @@ proc main =
   # --------------------------------------------------------------------------------------
   initWindow(screenWidth, screenHeight, "raylib game template")
   initAudioDevice() # Initialize audio device
-
-  # Load global data (assets that must be available in all screens, i.e. font)
-  font = loadFont("resources/mecha.png")
-  music = loadMusicStream("resources/ambient.ogg")
-  fxCoin = loadSound("resources/coin.wav")
-  setMusicVolume(music, 1)
-  playMusicStream(music)
-  # Setup and init first screen
-  currentScreen = Logo
-  initLogoScreen()
-  when defined(emscripten):
-    emscriptenSetMainLoop(updateDrawFrame, 60, 1)
-  else:
-    setTargetFPS(60) # Set our game to run at 60 frames-per-second
+  try:
+    # Load global data (assets that must be available in all screens, i.e. font)
+    font = loadFont("resources/mecha.png")
+    music = loadMusicStream("resources/ambient.ogg")
+    fxCoin = loadSound("resources/coin.wav")
+    setMusicVolume(music, 1)
+    playMusicStream(music)
+    # Setup and init first screen
+    currentScreen = Logo
+    initLogoScreen()
+    when defined(emscripten):
+      emscriptenSetMainLoop(updateDrawFrame, 60, 1)
+    else:
+      setTargetFPS(60) # Set our game to run at 60 frames-per-second
+      # ----------------------------------------------------------------------------------
+      # Main game loop
+      while not windowShouldClose(): # Detect window close button or ESC key
+        updateDrawFrame()
+    # De-Initialization
     # ------------------------------------------------------------------------------------
-    # Main game loop
-    while not windowShouldClose(): # Detect window close button or ESC key
-      updateDrawFrame()
-  # De-Initialization
-  # --------------------------------------------------------------------------------------
-  # Unload current screen data before closing
-  case currentScreen
-  of Logo:
-    unloadLogoScreen()
-  of Title:
-    unloadTitleScreen()
-  of Gameplay:
-    unloadGameplayScreen()
-  of Ending:
-    unloadEndingScreen()
-  else:
-    discard
-  # Unload global data loaded
-  reset(font)
-  reset(music)
-  reset(fxCoin)
-  closeAudioDevice() # Close audio context
-  closeWindow() # Close window and OpenGL context
+    # Unload current screen data before closing
+    case currentScreen
+    of Logo:
+      unloadLogoScreen()
+    of Title:
+      unloadTitleScreen()
+    of Gameplay:
+      unloadGameplayScreen()
+    of Ending:
+      unloadEndingScreen()
+    else:
+      discard
+    # Unload global data loaded
+    reset(font)
+    reset(music)
+    reset(fxCoin)
+  finally:
+    closeAudioDevice() # Close audio context
+    closeWindow() # Close window and OpenGL context
   # --------------------------------------------------------------------------------------
 
 main()

@@ -47,7 +47,7 @@ proc updateTitleScreen* =
   # Title Screen Update logic
   # TODO: Update TITLE screen variables here!
   # Press enter or tap to change to GAMEPLAY screen
-  if isKeyPressed(KeyEnter) or isGestureDetected(GestureTap):
+  if isKeyPressed(Enter) or isGestureDetected(Tap):
     # finishScreen = 1   # OPTIONS
     finishScreen = 2
     # GAMEPLAY

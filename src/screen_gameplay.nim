@@ -47,7 +47,7 @@ proc updateGameplayScreen* =
   # Gameplay Screen Update logic
   # TODO: Update GAMEPLAY screen variables here!
   # Press enter or tap to change to ENDING screen
-  if isKeyPressed(KeyEnter) or isGestureDetected(GestureTap):
+  if isKeyPressed(Enter) or isGestureDetected(Tap):
     finishScreen = 1
     playSound(fxCoin)
 
