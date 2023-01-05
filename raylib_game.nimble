@@ -6,4 +6,4 @@ license       = ""
 srcDir        = "src"
 
 # Dependencies
-requires "naylib#7689710"
+requires "naylib#87d7221"
