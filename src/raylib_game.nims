@@ -10,23 +10,23 @@ const AndroidSysroot = AndroidToolchain & "/sysroot"
 
 switch("arm.android.clang.path", AndroidToolchain & "/bin")
 switch("arm.android.clang.exe", "armv7a-linux-androideabi" & $AndroidApi & "-clang")
-switch("arm.android.clang.cpp.exe", "armv7a-linux-androideabi" & $AndroidApi & "-clang++")
 switch("arm.android.clang.linkerexe", "llvm-ar")
+switch("arm.android.clang.cpp.exe", "armv7a-linux-androideabi" & $AndroidApi & "-clang++")
 
 switch("arm64.android.clang.path", AndroidToolchain & "/bin")
 switch("arm64.android.clang.exe", "aarch64-linux-android" & $AndroidApi & "-clang")
-switch("arm64.android.clang.cpp.exe", "aarch64-linux-android" & $AndroidApi & "-clang++")
 switch("arm64.android.clang.linkerexe", "llvm-ar")
+switch("arm64.android.clang.cpp.exe", "aarch64-linux-android" & $AndroidApi & "-clang++")
 
 switch("i386.android.clang.path", AndroidToolchain & "/bin")
 switch("i386.android.clang.exe", "i686-linux-android" & $AndroidApi & "-clang")
-switch("i386.android.clang.cpp.exe", "i686-linux-android" & $AndroidApi & "-clang++")
 switch("i386.android.clang.linkerexe", "llvm-ar")
+switch("i386.android.clang.cpp.exe", "i686-linux-android" & $AndroidApi & "-clang++")
 
 switch("amd64.android.clang.path", AndroidToolchain & "/bin")
 switch("amd64.android.clang.exe", "x86_64-linux-android" & $AndroidApi & "-clang")
-switch("amd64.android.clang.cpp.exe", "x86_64-linux-android" & $AndroidApi & "-clang++")
 switch("amd64.android.clang.linkerexe", "llvm-ar")
+switch("amd64.android.clang.cpp.exe", "x86_64-linux-android" & $AndroidApi & "-clang++")
 
 when defined(windows):
   switch("wasm32.linux.clang.exe", "emcc.bat")
@@ -65,12 +65,13 @@ when defined(android):
   # --threads:off
   --panics:on
   --define:noSignalHandler
+
 elif defined(emscripten):
   --define:GraphicsApiOpenGlEs2
   --define:NaylibWebResources
-
+  --os:linux
+  --cpu:wasm32
   --cc:clang
-
   --mm:orc
   --threads:off
   --panics:on
