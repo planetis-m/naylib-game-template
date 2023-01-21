@@ -8,10 +8,10 @@ srcDir        = "src"
 # Dependencies
 requires "naylib#5da4353"
 
-import os
+import std/[os, strformat]
 
 # Define Android architecture (armeabi-v7a, arm64-v8a, x86, x86-64) and API version
-const AndroidApi = 29
+const AndroidApiVersion = 29
 when hostCPU == "arm":
   const AndroidArchName = "armeabi-v7a"
 elif hostCPU == "arm64":
@@ -58,6 +58,7 @@ const
   AppKeystorePass = "raylib"
 
 task setupAndroid, "Set up raylib project for Android":
+  # Create required temp directories for APK building
   mkDir(ProjectBuildPath / "src/com" / AppCompanyName / AppProductName)
   mkDir(ProjectBuildPath / "lib" / AndroidArchName)
   mkDir(ProjectBuildPath / "bin")
@@ -67,6 +68,51 @@ task setupAndroid, "Set up raylib project for Android":
   mkDir(ProjectBuildPath / "res/values")
   mkDir(ProjectBuildPath / "assets")
   mkDir(ProjectBuildPath / "obj/screens")
+  # Copy project required resources: strings.xml, icon.png, assets
+  writeFile(ProjectBuildPath / "res/values/strings.xml", "<?xml version='1.0' encoding='utf-8'?>\n<resources><string name='app_name'>$AppLabelName</string></resources>\n")
+  cpFile(AppIconLdpi, ProjectBuildPath / "res/drawable-ldpi/icon.png")
+  cpFile(AppIconMdpi, ProjectBuildPath / "res/drawable-mdpi/icon.png")
+  cpFile(AppIconHdpi, ProjectBuildPath / "res/drawable-hdpi/icon.png")
+  cpDir(ProjectResourcesPath, ProjectBuildPath / "assets")
+  # Generate NativeLoader.java to load required shared libraries
+  writeFile(ProjectBuildPath / "src/com" / AppCompanyName / AppProductName / "NativeLoader.java",
+      "package com." & AppCompanyName & "." & AppProductName & """;
+
+public class NativeLoader extends android.app.NativeActivity {
+    static {
+        System.loadLibrary("""" & ProjectLibraryName & """");
+    }
+}
+""")
+  # Generate AndroidManifest.xml with all the required options
+  writeFile(ProjectBuildPath / "AndroidManifest.xml", """
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+       package="com.""" & AppCompanyName & "." & AppProductName & """"
+       android:versionCode="""" & $AppVersionCode & "\" android:versionName=\"" & AppVersionName & """" >
+   <uses-sdk android:minSdkVersion="""" & $AndroidApiVersion & """" />
+   <uses-feature android:glEsVersion="0x00020000" android:required="true" />
+   <application android:allowBackup="false" android:label="@string/app_name" android:icon="@drawable/icon" >
+       <activity android:name="com.""" & AppCompanyName & "." & AppProductName & """.NativeLoader"
+           android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
+           android:configChanges="orientation|keyboardHidden|screenSize"
+           android:screenOrientation="""" & AppScreenOrientation & """" android:launchMode="singleTask"
+           android:clearTaskOnLaunch="true">
+           <meta-data android:name="android.app.lib_name" android:value="""" & ProjectLibraryName & """" />
+           <intent-filter>
+               <action android:name="android.intent.action.MAIN" />
+               <category android:name="android.intent.category.LAUNCHER" />
+           </intent-filter>
+       </activity>
+   </application>
+</manifest>
+""")
+  # Generate storekey for APK signing: ProjectName.keystore
+  let keystorePath = ProjectBuildPath / ProjectName & ".keystore"
+  if not fileExists(keystorePath):
+    exec(JavaHome / "bin/keytool -genkeypair -validity 10000 -dname \"CN=" & AppCompanyName &
+        ",O=Android,C=ES\" -keystore " & keystorePath & " -storepass " & AppKeystorePass &
+        " -keypass " & AppKeystorePass & " -alias " & ProjectName & "Key -keyalg RSA")
 
 task buildAndroid, "Compile raylib project for Android":
   discard
