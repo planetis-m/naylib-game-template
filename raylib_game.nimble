@@ -109,33 +109,34 @@ public class NativeLoader extends android.app.NativeActivity {
 
 task buildAndroid, "Compile raylib project for Android":
   # Config project package and resource using AndroidManifest.xml and res/values/strings.xml
-  exec(AndroidBuildTools / "aapt", "package -f -m -S " & ProjectBuildPath / "res" & " -J " &
+  exec(AndroidBuildTools / "aapt" & " package -f -m -S " & ProjectBuildPath / "res" & " -J " &
       ProjectBuildPath / "src" & " -M " & ProjectBuildPath / "AndroidManifest.xml" & " -I " &
       AndroidHome / ("platforms/android-" & $AndroidApiVersion) / "android.jar")
   # Compile project code into a shared library: lib/lib{ProjectLibraryName}.so
-  exec("nim", "c -d:release --app:lib -o:" &
+  exec("nim c -d:release --app:lib -o:" &
       ProjectBuildPath / "lib" / AndroidArchName / ("lib" & ProjectLibraryName & ".so") & " " & ProjectSourceFile)
   # Compile project .java code into .class (Java bytecode)
-  exec(JavaHome / "bin/javac", "-verbose -source 1.8 -target 1.8 -d " & ProjectBuildPath / "obj" &
+  exec(JavaHome / "bin/javac" & " -verbose -source 1.8 -target 1.8 -d " & ProjectBuildPath / "obj" &
       " -bootclasspath " & JavaHome / "jre/lib/rt.jar" & " -classpath " &
       AndroidHome / ("platforms/android-" & $AndroidApiVersion) / "android.jar" & ":" &
       ProjectBuildPath / "obj" & " -sourcepath " & ProjectBuildPath / "src" & " " &
       ProjectBuildPath / "src/com" / AppCompanyName / AppProductName / "R.java" & " " &
       ProjectBuildPath / "src/com" / AppCompanyName / AppProductName / "NativeLoader.java")
   # Compile .class files into Dalvik executable bytecode (.dex)
-  exec(AndroidBuildTools / "dx", "--verbose --dex --output=" & ProjectBuildPath / "bin/classes.dex" & " " &
+  exec(AndroidBuildTools / "dx" & " --verbose --dex --output=" & ProjectBuildPath / "bin/classes.dex" & " " &
       ProjectBuildPath / "obj")
   # Create Android APK package: bin/{ProjectName}.unsigned.apk
-  exec(AndroidBuildTools / "aapt", "package -f -M " & ProjectBuildPath / "AndroidManifest.xml" & " -S " &
+  exec(AndroidBuildTools / "aapt" & " package -f -M " & ProjectBuildPath / "AndroidManifest.xml" & " -S " &
       ProjectBuildPath / "res" & " -A " & ProjectBuildPath / "assets" & " -I " &
       AndroidHome / ("platforms/android-" & $AndroidApiVersion) / "android.jar" & " -F " &
       ProjectBuildPath / "bin" / (ProjectName & ".unsigned.apk") & " " & ProjectBuildPath / "bin")
-  exec(AndroidBuildTools / "aapt", "add " & ProjectBuildPath / "bin" / ProjectName & ".unsigned.apk" & " " &
+  exec(AndroidBuildTools / "aapt" & " add " & ProjectBuildPath / "bin" / ProjectName & ".unsigned.apk" & " " &
       ProjectBuildPath / "lib" / AndroidArchName / ("lib" & ProjectLibraryName & ".so"))
   # Create signed APK package using generated Key: bin/{ProjectName}.signed.apk
-  exec(JavaHome / "bin/jarsigner", "-keystore " & ProjectBuildPath / (ProjectName & ".keystore") &
+  exec(JavaHome / "bin/jarsigner" & " -keystore " & ProjectBuildPath / (ProjectName & ".keystore") &
       " -storepass " & AppKeystorePass & " -keypass " & AppKeystorePass &
       " -signedjar " & ProjectBuildPath / "bin" / (ProjectName & ".signed.apk") &
       " " & ProjectBuildPath / "bin" / (ProjectName & ".unsigned.apk") & " " & ProjectName & "Key")
   # Create zip-aligned APK package: {ProjectName}.apk
-  exec(AndroidBuildTools / "zipalign", "-f 4 " & ProjectBuildPath / "bin" / (ProjectName & ".signed.apk") & " " & ProjectName & ".apk")
+  exec(AndroidBuildTools / "zipalign" & " -f 4 " & ProjectBuildPath / "bin" / (ProjectName & ".signed.apk") & " " &
+      ProjectName & ".apk")
