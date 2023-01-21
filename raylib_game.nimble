@@ -34,7 +34,7 @@ const
   ProjectLibraryName = "main"
   ProjectBuildId = "android"
   ProjectBuildPath = ProjectBuildId & "." & ProjectName
-  ProjectResourcesPath = "resources"
+  ProjectResourcesPath = "src/resources"
   ProjectSourceFile = "src/raylib_game.nim"
 
 # Android app configuration variables
@@ -59,14 +59,14 @@ task setupAndroid, "Set up raylib project for Android":
   mkDir(ProjectBuildPath / "res/drawable-mdpi")
   mkDir(ProjectBuildPath / "res/drawable-hdpi")
   mkDir(ProjectBuildPath / "res/values")
-  mkDir(ProjectBuildPath / "assets")
+  mkDir(ProjectBuildPath / "assets/resources")
   mkDir(ProjectBuildPath / "obj/screens")
   # Copy project required resources: strings.xml, icon.png, assets
   writeFile(ProjectBuildPath / "res/values/strings.xml", "<?xml version='1.0' encoding='utf-8'?>\n<resources><string name='app_name'>$AppLabelName</string></resources>\n")
   cpFile(AppIconLdpi, ProjectBuildPath / "res/drawable-ldpi/icon.png")
   cpFile(AppIconMdpi, ProjectBuildPath / "res/drawable-mdpi/icon.png")
   cpFile(AppIconHdpi, ProjectBuildPath / "res/drawable-hdpi/icon.png")
-  cpDir(ProjectResourcesPath, ProjectBuildPath / "assets")
+  cpDir(ProjectResourcesPath, ProjectBuildPath / "assets/resources")
   # Generate NativeLoader.java to load required shared libraries
   writeFile(ProjectBuildPath / "src/com" / AppCompanyName / AppProductName / "NativeLoader.java",
       "package com." & AppCompanyName & "." & AppProductName & """;
