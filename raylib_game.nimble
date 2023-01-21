@@ -35,6 +35,7 @@ const
   ProjectBuildId = "android"
   ProjectBuildPath = ProjectBuildId & "." & ProjectName
   ProjectResourcesPath = "resources"
+  ProjectSourceFile = "src/raylib_game.nim"
 
 # Android app configuration variables
 const
@@ -99,7 +100,7 @@ public class NativeLoader extends android.app.NativeActivity {
    </application>
 </manifest>
 """)
-  # Generate storekey for APK signing: ProjectName.keystore
+  # Generate storekey for APK signing: {ProjectName}.keystore
   let keystorePath = ProjectBuildPath / ProjectName & ".keystore"
   if not fileExists(keystorePath):
     exec(JavaHome / "bin/keytool -genkeypair -validity 10000 -dname \"CN=" & AppCompanyName &
@@ -111,8 +112,9 @@ task buildAndroid, "Compile raylib project for Android":
   exec(AndroidBuildTools / "aapt", "package -f -m -S " & ProjectBuildPath / "res" & " -J " &
       ProjectBuildPath / "src" & " -M " & ProjectBuildPath / "AndroidManifest.xml" & " -I " &
       AndroidHome / ("platforms/android-" & $AndroidApiVersion) / "android.jar")
-  # Compile project code into a shared library: lib/lib$(PROJECT_LIBRARY_NAME).so
-  #TODO
+  # Compile project code into a shared library: lib/lib{ProjectLibraryName}.so
+  exec("nim", "c -d:release --app:lib -o:" &
+      ProjectBuildPath / "lib" / AndroidArchName / ("lib" & ProjectLibraryName & ".so") & " " & ProjectSourceFile)
   # Compile project .java code into .class (Java bytecode)
   exec(JavaHome / "bin/javac", "-verbose -source 1.8 -target 1.8 -d " & ProjectBuildPath / "obj" &
       " -bootclasspath " & JavaHome / "jre/lib/rt.jar" & " -classpath " &
@@ -123,17 +125,17 @@ task buildAndroid, "Compile raylib project for Android":
   # Compile .class files into Dalvik executable bytecode (.dex)
   exec(AndroidBuildTools / "dx", "--verbose --dex --output=" & ProjectBuildPath / "bin/classes.dex" & " " &
       ProjectBuildPath / "obj")
-  # Create Android APK package: bin/ProjectName.unsigned.apk
+  # Create Android APK package: bin/{ProjectName}.unsigned.apk
   exec(AndroidBuildTools / "aapt", "package -f -M " & ProjectBuildPath / "AndroidManifest.xml" & " -S " &
       ProjectBuildPath / "res" & " -A " & ProjectBuildPath / "assets" & " -I " &
       AndroidHome / ("platforms/android-" & $AndroidApiVersion) / "android.jar" & " -F " &
       ProjectBuildPath / "bin" / (ProjectName & ".unsigned.apk") & " " & ProjectBuildPath / "bin")
   exec(AndroidBuildTools / "aapt", "add " & ProjectBuildPath / "bin" / ProjectName & ".unsigned.apk" & " " &
       ProjectBuildPath / "lib" / AndroidArchName / ("lib" & ProjectLibraryName & ".so"))
-  # Create signed APK package using generated Key: bin/ProjectName.signed.apk
+  # Create signed APK package using generated Key: bin/{ProjectName}.signed.apk
   exec(JavaHome / "bin/jarsigner", "-keystore " & ProjectBuildPath / (ProjectName & ".keystore") &
       " -storepass " & AppKeystorePass & " -keypass " & AppKeystorePass &
       " -signedjar " & ProjectBuildPath / "bin" / (ProjectName & ".signed.apk") &
       " " & ProjectBuildPath / "bin" / (ProjectName & ".unsigned.apk") & " " & ProjectName & "Key")
-  # Create zip-aligned APK package: ProjectName.apk
+  # Create zip-aligned APK package: {ProjectName}.apk
   exec(AndroidBuildTools / "zipalign", "-f 4 " & ProjectBuildPath / "bin" / (ProjectName & ".signed.apk") & " " & ProjectName & ".apk")
