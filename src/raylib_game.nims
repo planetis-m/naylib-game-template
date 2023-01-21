@@ -28,6 +28,17 @@ switch("amd64.android.clang.exe", "x86_64-linux-android" & $AndroidApi & "-clang
 switch("amd64.android.clang.cpp.exe", "x86_64-linux-android" & $AndroidApi & "-clang++")
 switch("amd64.android.clang.linkerexe", "llvm-ar")
 
+when defined(windows):
+  switch("wasm32.linux.clang.exe", "emcc.bat")
+  switch("wasm32.linux.clang.linkerexe", "emcc.bat")
+  switch("wasm32.linux.clang.cpp.exe", "emcc.bat")
+  switch("wasm32.linux.clang.cpp.linkerexe", "emcc.bat")
+else:
+  switch("wasm32.linux.clang.exe", "emcc")
+  switch("wasm32.linux.clang.linkerexe", "emcc")
+  switch("wasm32.linux.clang.cpp.exe", "emcc")
+  switch("wasm32.linux.clang.cpp.linkerexe", "emcc")
+
 when defined(android):
   --define:GraphicsApiOpenGlEs2
 
@@ -54,3 +65,16 @@ when defined(android):
   # --threads:off
   --panics:on
   --define:noSignalHandler
+elif defined(emscripten):
+  --define:GraphicsApiOpenGlEs2
+  --define:NaylibWebResources
+
+  --cc:clang
+
+  --mm:orc
+  --threads:off
+  --panics:on
+  --define:noSignalHandler
+  --passL:"-o raylib_game.html"
+  # Use raylib/src/shell.html or raylib/src/minshell.html
+  # --passL:"--shell-file minshell.html"
