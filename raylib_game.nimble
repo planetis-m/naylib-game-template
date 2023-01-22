@@ -6,7 +6,7 @@ license       = "License"
 srcDir        = "src"
 
 # Dependencies
-requires "naylib#7bdb77d"
+requires "naylib#726d7f2"
 
 import std/[os, strformat]
 
@@ -114,7 +114,7 @@ task buildAndroid, "Compile raylib project for Android":
       ProjectBuildPath / "src" & " -M " & ProjectBuildPath / "AndroidManifest.xml" & " -I " &
       AndroidHome / ("platforms/android-" & $AndroidApiVersion) / "android.jar")
   # Compile project code into a shared library: lib/lib{ProjectLibraryName}.so
-  exec("nim c -d:release --app:lib --os:android --cpu:" & hostCPU & " -d:AndroidApiVersion=" &
+  exec("nim c -d:release --os:android --cpu:" & hostCPU & " -d:AndroidApiVersion=" &
       $AndroidApiVersion & " -d:AndroidNdk=" & AndroidNdk & " -o:" &
       ProjectBuildPath / "lib" / AndroidArchName / ("lib" & ProjectLibraryName & ".so") & " " & ProjectSourceFile)
   # Compile project .java code into .class (Java bytecode)
@@ -136,8 +136,9 @@ task buildAndroid, "Compile raylib project for Android":
       ProjectBuildPath / "res" & " -A " & ProjectBuildPath / "assets" & " -I " &
       AndroidHome / ("platforms/android-" & $AndroidApiVersion) / "android.jar" & " -F " &
       unsignedApkPath & " " & ProjectBuildPath / "bin")
-  exec(AndroidBuildTools / "aapt" & " add " & ProjectBuildPath / "bin" / ProjectName & ".unsigned.apk" & " " &
-      ProjectBuildPath / "lib" / AndroidArchName / ("lib" & ProjectLibraryName & ".so"))
+  withDir(ProjectBuildPath):
+    exec(AndroidBuildTools / "aapt" & " add " & "bin" / ProjectName & ".unsigned.apk" & " " &
+        "lib" / AndroidArchName / ("lib" & ProjectLibraryName & ".so"))
   # Create signed APK package using generated Key: bin/{ProjectName}.signed.apk
   exec(JavaHome / "bin/jarsigner" & " -keystore " & ProjectBuildPath / (ProjectName & ".keystore") &
       " -storepass " & AppKeystorePass & " -keypass " & AppKeystorePass &
