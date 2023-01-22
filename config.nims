@@ -51,21 +51,23 @@ when defined(android):
   --cc:clang
   switch("passC", "-I" & AndroidSysroot / "usr/include")
   when hostCPU == "arm":
-    switch("passC", "-march=armv7-a -mfloat-abi=softfp -mfpu=vfpv3-d16")
     switch("passC", "-I" & AndroidSysroot / "usr/include/arm-linux-androideabi")
+    const AndroidAbiFlags = "-march=armv7-a -mfloat-abi=softfp -mfpu=vfpv3-d16"
   elif hostCPU == "arm64":
-    switch("passC", "-target aarch64 -mfix-cortex-a53-835769")
     switch("passC", "-I" & AndroidSysroot / "usr/include/aarch64-linux-android")
+    const AndroidAbiFlags = "-std=c99 -target aarch64 -mfix-cortex-a53-835769"
   elif hostCPU == "i386":
-    switch("passC", "-march=i686")
     switch("passC", "-I" & AndroidSysroot / "usr/include/i686-linux-android")
+    const AndroidAbiFlags = "-march=i686"
   elif hostCPU == "amd64":
-    switch("passC", "-march=x86-64")
     switch("passC", "-I" & AndroidSysroot / "usr/include/x86_64-linux-android")
+    const AndroidAbiFlags = "-march=x86-64"
+  switch("passC", AndroidAbiFlags)
+  switch("passL", AndroidAbiFlags)
 
   # --define:androidNDK
   --mm:orc
-  # --threads:off
+  --threads:off
   --panics:on
   --define:noSignalHandler
 

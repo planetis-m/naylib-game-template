@@ -129,7 +129,7 @@ task buildAndroid, "Compile raylib project for Android":
       ProjectBuildPath / "obj")
   let unsignedApkPath = ProjectBuildPath / "bin" / (ProjectName & ".unsigned.apk")
   let signedApkPath = ProjectBuildPath / "bin" / (ProjectName & ".signed.apk")
-  rmFile(unsignedApkPath) # fixes freeze when rebuilding
+  rmFile(unsignedApkPath) # fixes rebuilding
   rmFile(signedApkPath)
   # Create Android APK package: bin/{ProjectName}.unsigned.apk
   exec(AndroidBuildTools / "aapt" & " package -f -M " & ProjectBuildPath / "AndroidManifest.xml" & " -S " &
