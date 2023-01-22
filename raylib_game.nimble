@@ -127,20 +127,22 @@ task buildAndroid, "Compile raylib project for Android":
   # Compile .class files into Dalvik executable bytecode (.dex)
   exec(AndroidBuildTools / "dx" & " --verbose --dex --output=" & ProjectBuildPath / "bin/classes.dex" & " " &
       ProjectBuildPath / "obj")
-  rmFile(ProjectBuildPath / "bin" / (ProjectName & ".unsigned.apk")) # fixes freeze when rebuilding
-  rmFile(ProjectBuildPath / "bin" / (ProjectName & ".signed.apk"))
+  let unsignedApkPath = ProjectBuildPath / "bin" / (ProjectName & ".unsigned.apk")
+  let signedApkPath = ProjectBuildPath / "bin" / (ProjectName & ".signed.apk")
+  rmFile(unsignedApkPath) # fixes freeze when rebuilding
+  rmFile(signedApkPath)
   # Create Android APK package: bin/{ProjectName}.unsigned.apk
   exec(AndroidBuildTools / "aapt" & " package -f -M " & ProjectBuildPath / "AndroidManifest.xml" & " -S " &
       ProjectBuildPath / "res" & " -A " & ProjectBuildPath / "assets" & " -I " &
       AndroidHome / ("platforms/android-" & $AndroidApiVersion) / "android.jar" & " -F " &
-      ProjectBuildPath / "bin" / (ProjectName & ".unsigned.apk") & " " & ProjectBuildPath / "bin")
+      unsignedApkPath & " " & ProjectBuildPath / "bin")
   exec(AndroidBuildTools / "aapt" & " add " & ProjectBuildPath / "bin" / ProjectName & ".unsigned.apk" & " " &
       ProjectBuildPath / "lib" / AndroidArchName / ("lib" & ProjectLibraryName & ".so"))
   # Create signed APK package using generated Key: bin/{ProjectName}.signed.apk
   exec(JavaHome / "bin/jarsigner" & " -keystore " & ProjectBuildPath / (ProjectName & ".keystore") &
       " -storepass " & AppKeystorePass & " -keypass " & AppKeystorePass &
-      " -signedjar " & ProjectBuildPath / "bin" / (ProjectName & ".signed.apk") &
-      " " & ProjectBuildPath / "bin" / (ProjectName & ".unsigned.apk") & " " & ProjectName & "Key")
+      " -signedjar " & signedApkPath &
+      " " & unsignedApkPath & " " & ProjectName & "Key")
   # Create zip-aligned APK package: {ProjectName}.apk
-  exec(AndroidBuildTools / "zipalign" & " -f 4 " & ProjectBuildPath / "bin" / (ProjectName & ".signed.apk") & " " &
+  exec(AndroidBuildTools / "zipalign" & " -f 4 " & signedApkPath & " " &
       ProjectName & ".apk")
