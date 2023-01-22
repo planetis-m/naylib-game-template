@@ -127,7 +127,7 @@ task buildAndroid, "Compile raylib project for Android":
   # Compile .class files into Dalvik executable bytecode (.dex)
   exec(AndroidBuildTools / "dx" & " --verbose --dex --output=" & ProjectBuildPath / "bin/classes.dex" & " " &
       ProjectBuildPath / "obj")
-  rmFile(ProjectBuildPath / "bin" / (ProjectName & ".unsigned.apk"))
+  rmFile(ProjectBuildPath / "bin" / (ProjectName & ".unsigned.apk")) # fixes freeze when rebuilding
   # Create Android APK package: bin/{ProjectName}.unsigned.apk
   exec(AndroidBuildTools / "aapt" & " package -f -M " & ProjectBuildPath / "AndroidManifest.xml" & " -S " &
       ProjectBuildPath / "res" & " -A " & ProjectBuildPath / "assets" & " -I " &

@@ -11,27 +11,27 @@ const AndroidSysroot = AndroidToolchain / "sysroot"
 
 switch("arm.android.clang.path", AndroidToolchain / "bin")
 switch("arm.android.clang.exe", "armv7a-linux-androideabi" & $AndroidApiVersion & "-clang")
-switch("arm.android.clang.linkerexe", "llvm-ar")
+switch("arm.android.clang.linkerexe", "armv7a-linux-androideabi" & $AndroidApiVersion & "-clang")
 switch("arm.android.clang.cpp.exe", "armv7a-linux-androideabi" & $AndroidApiVersion & "-clang++")
-switch("arm.android.clang.cpp.linkerexe", "llvm-ar")
+switch("arm.android.clang.cpp.linkerexe", "armv7a-linux-androideabi" & $AndroidApiVersion & "-clang++")
 
 switch("arm64.android.clang.path", AndroidToolchain / "bin")
 switch("arm64.android.clang.exe", "aarch64-linux-android" & $AndroidApiVersion & "-clang")
-switch("arm64.android.clang.linkerexe", "llvm-ar")
+switch("arm64.android.clang.linkerexe", "aarch64-linux-android" & $AndroidApiVersion & "-clang")
 switch("arm64.android.clang.cpp.exe", "aarch64-linux-android" & $AndroidApiVersion & "-clang++")
-switch("arm64.android.clang.cpp.linkerexe", "llvm-ar")
+switch("arm64.android.clang.cpp.linkerexe", "aarch64-linux-android" & $AndroidApiVersion & "-clang++")
 
 switch("i386.android.clang.path", AndroidToolchain / "bin")
 switch("i386.android.clang.exe", "i686-linux-android" & $AndroidApiVersion & "-clang")
-switch("i386.android.clang.linkerexe", "llvm-ar")
+switch("i386.android.clang.linkerexe", "i686-linux-android" & $AndroidApiVersion & "-clang")
 switch("i386.android.clang.cpp.exe", "i686-linux-android" & $AndroidApiVersion & "-clang++")
-switch("i386.android.clang.cpp.linkerexe", "llvm-ar")
+switch("i386.android.clang.cpp.linkerexe", "i686-linux-android" & $AndroidApiVersion & "-clang++")
 
 switch("amd64.android.clang.path", AndroidToolchain / "bin")
 switch("amd64.android.clang.exe", "x86_64-linux-android" & $AndroidApiVersion & "-clang")
-switch("amd64.android.clang.linkerexe", "llvm-ar")
+switch("amd64.android.clang.linkerexe", "x86_64-linux-android" & $AndroidApiVersion & "-clang")
 switch("amd64.android.clang.cpp.exe", "x86_64-linux-android" & $AndroidApiVersion & "-clang++")
-switch("amd64.android.clang.cpp.linkerexe", "llvm-ar")
+switch("amd64.android.clang.cpp.linkerexe", "x86_64-linux-android" & $AndroidApiVersion & "-clang++")
 
 when defined(windows):
   switch("wasm32.linux.clang.exe", "emcc.bat")
