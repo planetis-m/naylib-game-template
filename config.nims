@@ -35,7 +35,7 @@ when defined(android):
   switch("clang.cpp.linkerexe", AndroidTarget & "-clang++")
   switch("clang.options.always", "--sysroot=" & AndroidSysroot & " -I" & AndroidSysroot / "usr/include" &
          " -I" & AndroidSysroot / "usr/include" / AndroidTriple & " " & AndroidAbiFlags)
-  switch("clang.options.linker", "-shared " & AndroidAbiFlags & " -L" & AndroidSysroot / "usr/lib")
+  switch("clang.options.linker", "-shared -L" & AndroidSysroot / "usr/lib" & AndroidAbiFlags)
 
   # --define:androidNDK
   --mm:orc
