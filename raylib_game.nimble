@@ -6,7 +6,7 @@ license       = "License"
 srcDir        = "src"
 
 # Dependencies
-requires "naylib#5da4353"
+requires "naylib#e943f55"
 
 import std/[os, strformat]
 
@@ -24,6 +24,7 @@ elif hostCPU == "amd64":
 # Required path variables
 const
   JavaHome = "/usr/lib/jvm/java-19-openjdk"
+  AndroidNdk = "/opt/android-ndk"
   AndroidHome = "/opt/android-sdk"
   AndroidBuildTools = AndroidHome / "build-tools/30.0.3"
   AndroidPlatformTools = AndroidHome / "platform-tools"
@@ -113,7 +114,8 @@ task buildAndroid, "Compile raylib project for Android":
       ProjectBuildPath / "src" & " -M " & ProjectBuildPath / "AndroidManifest.xml" & " -I " &
       AndroidHome / ("platforms/android-" & $AndroidApiVersion) / "android.jar")
   # Compile project code into a shared library: lib/lib{ProjectLibraryName}.so
-  exec("nim c -d:release --app:lib -o:" &
+  exec("nim c -d:release --app:lib --os:android --cpu:" & hostCPU & " -d:AndroidApiVersion=" &
+      $AndroidApiVersion & " -d:AndroidNdk=" & AndroidNdk & " -o:" &
       ProjectBuildPath / "lib" / AndroidArchName / ("lib" & ProjectLibraryName & ".so") & " " & ProjectSourceFile)
   # Compile project .java code into .class (Java bytecode)
   exec(JavaHome / "bin/javac" & " -verbose -source 1.8 -target 1.8 -d " & ProjectBuildPath / "obj" &

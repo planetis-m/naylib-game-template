@@ -1,7 +1,6 @@
 import os
-
-const AndroidApi = 29
-const AndroidNdk = "/opt/android-ndk"
+const AndroidApiVersion {.intdefine.} = 29
+const AndroidNdk {.strdefine.} = "/opt/android-ndk"
 when defined(windows):
   const AndroidToolchain = AndroidNdk / "toolchains/llvm/prebuilt/windows-x86_64"
 elif defined(linux):
@@ -11,24 +10,28 @@ elif defined(macosx):
 const AndroidSysroot = AndroidToolchain / "sysroot"
 
 switch("arm.android.clang.path", AndroidToolchain / "bin")
-switch("arm.android.clang.exe", "armv7a-linux-androideabi" & $AndroidApi & "-clang")
+switch("arm.android.clang.exe", "armv7a-linux-androideabi" & $AndroidApiVersion & "-clang")
 switch("arm.android.clang.linkerexe", "llvm-ar")
-switch("arm.android.clang.cpp.exe", "armv7a-linux-androideabi" & $AndroidApi & "-clang++")
+switch("arm.android.clang.cpp.exe", "armv7a-linux-androideabi" & $AndroidApiVersion & "-clang++")
+switch("arm.android.clang.cpp.linkerexe", "llvm-ar")
 
 switch("arm64.android.clang.path", AndroidToolchain / "bin")
-switch("arm64.android.clang.exe", "aarch64-linux-android" & $AndroidApi & "-clang")
+switch("arm64.android.clang.exe", "aarch64-linux-android" & $AndroidApiVersion & "-clang")
 switch("arm64.android.clang.linkerexe", "llvm-ar")
-switch("arm64.android.clang.cpp.exe", "aarch64-linux-android" & $AndroidApi & "-clang++")
+switch("arm64.android.clang.cpp.exe", "aarch64-linux-android" & $AndroidApiVersion & "-clang++")
+switch("arm64.android.clang.cpp.linkerexe", "llvm-ar")
 
 switch("i386.android.clang.path", AndroidToolchain / "bin")
-switch("i386.android.clang.exe", "i686-linux-android" & $AndroidApi & "-clang")
+switch("i386.android.clang.exe", "i686-linux-android" & $AndroidApiVersion & "-clang")
 switch("i386.android.clang.linkerexe", "llvm-ar")
-switch("i386.android.clang.cpp.exe", "i686-linux-android" & $AndroidApi & "-clang++")
+switch("i386.android.clang.cpp.exe", "i686-linux-android" & $AndroidApiVersion & "-clang++")
+switch("i386.android.clang.cpp.linkerexe", "llvm-ar")
 
 switch("amd64.android.clang.path", AndroidToolchain / "bin")
-switch("amd64.android.clang.exe", "x86_64-linux-android" & $AndroidApi & "-clang")
+switch("amd64.android.clang.exe", "x86_64-linux-android" & $AndroidApiVersion & "-clang")
 switch("amd64.android.clang.linkerexe", "llvm-ar")
-switch("amd64.android.clang.cpp.exe", "x86_64-linux-android" & $AndroidApi & "-clang++")
+switch("amd64.android.clang.cpp.exe", "x86_64-linux-android" & $AndroidApiVersion & "-clang++")
+switch("amd64.android.clang.cpp.linkerexe", "llvm-ar")
 
 when defined(windows):
   switch("wasm32.linux.clang.exe", "emcc.bat")
@@ -43,9 +46,6 @@ else:
 
 when defined(android):
   --define:GraphicsApiOpenGlEs2
-
-  switch("define", "AndroidApi=" & $AndroidApi)
-  switch("define", "AndroidNdk=" & AndroidNdk)
   --os:android
   # --cpu:arm64
   --cc:clang
