@@ -6,7 +6,7 @@ license       = "License"
 srcDir        = "src"
 
 # Dependencies
-requires "naylib#726d7f2"
+requires "naylib#78146ca"
 
 import std/[os, strformat]
 
