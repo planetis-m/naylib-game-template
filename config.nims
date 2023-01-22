@@ -15,26 +15,26 @@ when defined(android):
   # --cpu:arm64
   --cc:clang
   when hostCPU == "arm":
-    const AndroidCCType = "arm-linux-androideabi"
+    const AndroidTriple = "arm-linux-androideabi"
     const AndroidAbiFlags = "-march=armv7-a -mfloat-abi=softfp -mfpu=vfpv3-d16"
   elif hostCPU == "arm64":
-    const AndroidCCType = "aarch64-linux-android"
+    const AndroidTriple = "aarch64-linux-android"
     const AndroidAbiFlags = "-march=armv8-a -mfix-cortex-a53-835769"
   elif hostCPU == "i386":
-    const AndroidCCType = "i686-linux-android"
+    const AndroidTriple = "i686-linux-android"
     const AndroidAbiFlags = "-march=i686"
   elif hostCPU == "amd64":
-    const AndroidCCType = "x86_64-linux-android"
+    const AndroidTriple = "x86_64-linux-android"
     const AndroidAbiFlags = "-march=x86-64"
-  const AndroidAbiTarget = AndroidCCType & $AndroidApiVersion
+  const AndroidTarget = AndroidTriple & $AndroidApiVersion
 
   switch("clang.path", AndroidToolchain / "bin")
-  switch("clang.exe", AndroidAbiTarget & "-clang")
-  switch("clang.linkerexe", AndroidAbiTarget & "-clang")
-  switch("clang.cpp.exe", AndroidAbiTarget & "-clang++")
-  switch("clang.cpp.linkerexe", AndroidAbiTarget & "-clang++")
+  switch("clang.exe", AndroidTarget & "-clang")
+  switch("clang.linkerexe", AndroidTarget & "-clang")
+  switch("clang.cpp.exe", AndroidTarget & "-clang++")
+  switch("clang.cpp.linkerexe", AndroidTarget & "-clang++")
   switch("clang.options.always", "--sysroot=" & AndroidSysroot & " -I" & AndroidSysroot / "usr/include" &
-         " -I" & AndroidSysroot / "usr/include" / AndroidCCType & " " & AndroidAbiFlags)
+         " -I" & AndroidSysroot / "usr/include" / AndroidTriple & " " & AndroidAbiFlags)
   switch("clang.options.linker", AndroidAbiFlags & " -L" & AndroidSysroot / "usr/lib")
 
   # --define:androidNDK
