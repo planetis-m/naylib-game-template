@@ -19,7 +19,7 @@ when defined(android):
     const AndroidAbiFlags = "-march=armv7-a -mfloat-abi=softfp -mfpu=vfpv3-d16"
   elif hostCPU == "arm64":
     const AndroidTriple = "aarch64-linux-android"
-    const AndroidAbiFlags = "-march=armv8-a -mfix-cortex-a53-835769"
+    const AndroidAbiFlags = "-target aarch64 -mfix-cortex-a53-835769"
   elif hostCPU == "i386":
     const AndroidTriple = "i686-linux-android"
     const AndroidAbiFlags = "-march=i686"
