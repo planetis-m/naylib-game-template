@@ -49,22 +49,22 @@ when defined(android):
   --os:android
   # --cpu:arm64
   --cc:clang
-  switch("passC", "--sysroot=" & AndroidSysroot & " -I" & AndroidSysroot / "usr/include")
-  switch("passL", "-L" & AndroidSysroot / "usr/lib")
   when hostCPU == "arm":
-    switch("passC", "-I" & AndroidSysroot / "usr/include/arm-linux-androideabi")
+    const AndroidCCType = "arm-linux-androideabi"
     const AndroidAbiFlags = "-march=armv7-a -mfloat-abi=softfp -mfpu=vfpv3-d16"
   elif hostCPU == "arm64":
-    switch("passC", "-I" & AndroidSysroot / "usr/include/aarch64-linux-android")
-    const AndroidAbiFlags = "-target aarch64 -mfix-cortex-a53-835769"
+    const AndroidCCType = "aarch64-linux-android"
+    const AndroidAbiFlags = "-march=armv8-a -mfix-cortex-a53-835769"
   elif hostCPU == "i386":
-    switch("passC", "-I" & AndroidSysroot / "usr/include/i686-linux-android")
+    const AndroidCCType = "i686-linux-android"
     const AndroidAbiFlags = "-march=i686"
   elif hostCPU == "amd64":
-    switch("passC", "-I" & AndroidSysroot / "usr/include/x86_64-linux-android")
+    const AndroidCCType = "x86_64-linux-android"
     const AndroidAbiFlags = "-march=x86-64"
-  switch("passC", AndroidAbiFlags)
-  switch("passL", AndroidAbiFlags)
+
+  switch("clang.options.always", "--sysroot=" & AndroidSysroot & " -I" & AndroidSysroot / "usr/include" &
+      " -I" & AndroidSysroot / "usr/include" / AndroidCCType & " " & AndroidAbiFlags)
+  switch("clang.options.linker", AndroidAbiFlags & " -L" & AndroidSysroot / "usr/lib")
 
   # --define:androidNDK
   --mm:orc
