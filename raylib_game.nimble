@@ -8,7 +8,7 @@ srcDir        = "src"
 # Dependencies
 requires "naylib#78146ca"
 
-import std/[os, strformat]
+import std/os
 
 # Define Android architecture (armeabi-v7a, arm64-v8a, x86, x86-64) and API version
 const AndroidApiVersion = 29
@@ -137,7 +137,7 @@ task buildAndroid, "Compile raylib project for Android":
       AndroidHome / ("platforms/android-" & $AndroidApiVersion) / "android.jar" & " -F " &
       unsignedApkPath & " " & ProjectBuildPath / "bin")
   withDir(ProjectBuildPath):
-    exec(AndroidBuildTools / "aapt" & " add " & "bin" / ProjectName & ".unsigned.apk" & " " &
+    exec(AndroidBuildTools / "aapt" & " add " & "bin" / (ProjectName & ".unsigned.apk") & " " &
         "lib" / AndroidArchName / ("lib" & ProjectLibraryName & ".so"))
   # Create signed APK package using generated Key: bin/{ProjectName}.signed.apk
   exec(JavaHome / "bin/jarsigner" & " -keystore " & ProjectBuildPath / (ProjectName & ".keystore") &
