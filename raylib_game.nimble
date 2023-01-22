@@ -6,7 +6,7 @@ license       = "License"
 srcDir        = "src"
 
 # Dependencies
-requires "naylib#e943f55"
+requires "naylib#7bdb77d"
 
 import std/[os, strformat]
 
@@ -63,7 +63,7 @@ task setupAndroid, "Set up raylib project for Android":
   mkDir(ProjectBuildPath / "assets/resources")
   mkDir(ProjectBuildPath / "obj/screens")
   # Copy project required resources: strings.xml, icon.png, assets
-  writeFile(ProjectBuildPath / "res/values/strings.xml", "<?xml version='1.0' encoding='utf-8'?>\n<resources><string name='app_name'>$AppLabelName</string></resources>\n")
+  writeFile(ProjectBuildPath / "res/values/strings.xml", "<?xml version='1.0' encoding='utf-8'?>\n<resources><string name='app_name'>" & AppLabelName & "</string></resources>\n")
   cpFile(AppIconLdpi, ProjectBuildPath / "res/drawable-ldpi/icon.png")
   cpFile(AppIconMdpi, ProjectBuildPath / "res/drawable-mdpi/icon.png")
   cpFile(AppIconHdpi, ProjectBuildPath / "res/drawable-hdpi/icon.png")
@@ -128,6 +128,7 @@ task buildAndroid, "Compile raylib project for Android":
   exec(AndroidBuildTools / "dx" & " --verbose --dex --output=" & ProjectBuildPath / "bin/classes.dex" & " " &
       ProjectBuildPath / "obj")
   rmFile(ProjectBuildPath / "bin" / (ProjectName & ".unsigned.apk")) # fixes freeze when rebuilding
+  rmFile(ProjectBuildPath / "bin" / (ProjectName & ".signed.apk"))
   # Create Android APK package: bin/{ProjectName}.unsigned.apk
   exec(AndroidBuildTools / "aapt" & " package -f -M " & ProjectBuildPath / "AndroidManifest.xml" & " -S " &
       ProjectBuildPath / "res" & " -A " & ProjectBuildPath / "assets" & " -I " &
