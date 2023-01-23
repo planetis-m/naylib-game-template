@@ -8,7 +8,7 @@ srcDir        = "src"
 # Dependencies
 requires "naylib#78146ca"
 
-import std/os
+import std/[os, strutils, sequtils]
 
 # Define Android architecture (armeabi-v7a, arm64-v8a, x86, x86-64) and API version
 const AndroidApiVersion = 29
@@ -26,7 +26,7 @@ const
   JavaHome = "/usr/lib/jvm/java-19-openjdk"
   AndroidNdk = "/opt/android-ndk"
   AndroidHome = "/opt/android-sdk"
-  AndroidBuildTools = AndroidHome / "build-tools/30.0.3"
+  AndroidBuildTools = AndroidHome / "build-tools/33.0.1"
   AndroidPlatformTools = AndroidHome / "platform-tools"
 
 # Android project configuration variables
@@ -83,23 +83,23 @@ public class NativeLoader extends android.app.NativeActivity {
   writeFile(ProjectBuildPath / "AndroidManifest.xml", """
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-       package="com.""" & AppCompanyName & "." & AppProductName & """"
-       android:versionCode="""" & $AppVersionCode & "\" android:versionName=\"" & AppVersionName & """" >
-   <uses-sdk android:minSdkVersion="""" & $AndroidApiVersion & """" />
-   <uses-feature android:glEsVersion="0x00020000" android:required="true" />
-   <application android:allowBackup="false" android:label="@string/app_name" android:icon="@drawable/icon" >
-       <activity android:name="com.""" & AppCompanyName & "." & AppProductName & """.NativeLoader"
-           android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
-           android:configChanges="orientation|keyboardHidden|screenSize"
-           android:screenOrientation="""" & AppScreenOrientation & """" android:launchMode="singleTask"
-           android:clearTaskOnLaunch="true">
-           <meta-data android:name="android.app.lib_name" android:value="""" & ProjectLibraryName & """" />
-           <intent-filter>
-               <action android:name="android.intent.action.MAIN" />
-               <category android:name="android.intent.category.LAUNCHER" />
-           </intent-filter>
-       </activity>
-   </application>
+        package="com.""" & AppCompanyName & "." & AppProductName & """"
+        android:versionCode="""" & $AppVersionCode & "\" android:versionName=\"" & AppVersionName & """" >
+    <uses-sdk android:minSdkVersion="""" & $AndroidApiVersion & """" />
+    <uses-feature android:glEsVersion="0x00020000" android:required="true" />
+    <application android:allowBackup="false" android:label="@string/app_name" android:icon="@drawable/icon" >
+        <activity android:name="com.""" & AppCompanyName & "." & AppProductName & """.NativeLoader"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:screenOrientation="""" & AppScreenOrientation & """" android:launchMode="singleTask"
+            android:clearTaskOnLaunch="true">
+            <meta-data android:name="android.app.lib_name" android:value="""" & ProjectLibraryName & """" />
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
 </manifest>
 """)
   # Generate storekey for APK signing: {ProjectName}.keystore
@@ -126,13 +126,14 @@ task buildAndroid, "Compile raylib project for Android":
       ProjectBuildPath / "src/com" / AppCompanyName / AppProductName / "R.java" & " " &
       ProjectBuildPath / "src/com" / AppCompanyName / AppProductName / "NativeLoader.java")
   # Compile .class files into Dalvik executable bytecode (.dex)
-  exec(AndroidBuildTools / "dx" & " --verbose --dex --output=" & ProjectBuildPath / "bin/classes.dex" & " " &
-      ProjectBuildPath / "obj")
+  let classes = join(map(listFiles(ProjectBuildPath / "obj/com" / AppCompanyName / AppProductName), quoteShell), " ")
+  exec(AndroidBuildTools / "d8" & " --release --output " & ProjectBuildPath / "bin" &
+      " " & classes & " --lib " & AndroidHome / ("platforms/android-" & $AndroidApiVersion) / "android.jar")
+  # Create Android APK package: bin/{ProjectName}.unsigned.apk
   let unsignedApkPath = ProjectBuildPath / "bin" / (ProjectName & ".unsigned.apk")
   let signedApkPath = ProjectBuildPath / "bin" / (ProjectName & ".signed.apk")
   rmFile(unsignedApkPath) # fixes rebuilding
   rmFile(signedApkPath)
-  # Create Android APK package: bin/{ProjectName}.unsigned.apk
   exec(AndroidBuildTools / "aapt" & " package -f -M " & ProjectBuildPath / "AndroidManifest.xml" & " -S " &
       ProjectBuildPath / "res" & " -A " & ProjectBuildPath / "assets" & " -I " &
       AndroidHome / ("platforms/android-" & $AndroidApiVersion) / "android.jar" & " -F " &
