@@ -111,30 +111,30 @@ public class NativeLoader extends android.app.NativeActivity {
 
 task buildAndroid, "Compile raylib project for Android":
   # Config project package and resource using AndroidManifest.xml and res/values/strings.xml
-  let androidResource = AndroidHome / ("platforms/android-" & $AndroidApiVersion) / "android.jar"
+  let androidResourcePath = AndroidHome / ("platforms/android-" & $AndroidApiVersion) / "android.jar"
   exec(AndroidBuildTools / "aapt" & " package -f -m -S " & ProjectBuildPath / "res" & " -J " &
-      ProjectBuildPath / "src" & " -M " & ProjectBuildPath / "AndroidManifest.xml" & " -I " & androidResource)
+      ProjectBuildPath / "src" & " -M " & ProjectBuildPath / "AndroidManifest.xml" & " -I " & androidResourcePath)
   # Compile project code into a shared library: lib/lib{ProjectLibraryName}.so
   exec("nim c -d:release --os:android --cpu:" & hostCPU & " -d:AndroidApiVersion=" &
       $AndroidApiVersion & " -d:AndroidNdk=" & AndroidNdk & " -o:" &
       ProjectBuildPath / "lib" / AndroidArchName / ("lib" & ProjectLibraryName & ".so") & " " & ProjectSourceFile)
   # Compile project .java code into .class (Java bytecode)
   exec(JavaHome / "bin/javac" & " -verbose -source 1.8 -target 1.8 -d " & ProjectBuildPath / "obj" &
-      " -bootclasspath " & JavaHome / "jre/lib/rt.jar" & " -classpath " & androidResource & ":" &
+      " -bootclasspath " & JavaHome / "jre/lib/rt.jar" & " -classpath " & androidResourcePath & ":" &
       ProjectBuildPath / "obj" & " -sourcepath " & ProjectBuildPath / "src" & " " &
       ProjectBuildPath / "src/com" / AppCompanyName / AppProductName / "R.java" & " " &
       ProjectBuildPath / "src/com" / AppCompanyName / AppProductName / "NativeLoader.java")
   # Compile .class files into Dalvik executable bytecode (.dex)
   let classes = join(map(listFiles(ProjectBuildPath / "obj/com" / AppCompanyName / AppProductName), quoteShell), " ")
   exec(AndroidBuildTools / "d8" & " --release --output " & ProjectBuildPath / "bin" &
-      " " & classes & " --lib " & androidResource)
+      " " & classes & " --lib " & androidResourcePath)
   # Create Android APK package: bin/{ProjectName}.unsigned.apk
   let unsignedApkPath = ProjectBuildPath / "bin" / (ProjectName & ".unsigned.apk")
   let signedApkPath = ProjectBuildPath / "bin" / (ProjectName & ".signed.apk")
   rmFile(unsignedApkPath) # fixes rebuilding
   rmFile(signedApkPath)
   exec(AndroidBuildTools / "aapt" & " package -f -M " & ProjectBuildPath / "AndroidManifest.xml" & " -S " &
-      ProjectBuildPath / "res" & " -A " & ProjectBuildPath / "assets" & " -I " & androidResource & " -F " &
+      ProjectBuildPath / "res" & " -A " & ProjectBuildPath / "assets" & " -I " & androidResourcePath & " -F " &
       unsignedApkPath & " " & ProjectBuildPath / "bin")
   withDir(ProjectBuildPath):
     exec(AndroidBuildTools / "aapt" & " add " & "bin" / (ProjectName & ".unsigned.apk") & " " &
