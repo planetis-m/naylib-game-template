@@ -10,16 +10,21 @@ requires "naylib#78146ca"
 
 import std/[os, strutils, sequtils]
 
+type
+  CpuPlatform = enum
+    arm, arm64, i386, amd64
+
+proc toArchName(x: CpuPlatform): string =
+  case x
+  of arm: "armeabi-v7a"
+  of arm64: "arm64-v8a"
+  of i386: "i686"
+  of amd64: "x86_64"
+
 # Define Android architecture (armeabi-v7a, arm64-v8a, x86, x86-64) and API version
-const AndroidApiVersion = 29
-when hostCPU == "arm":
-  const AndroidArchName = "armeabi-v7a"
-elif hostCPU == "arm64":
-  const AndroidArchName = "arm64-v8a"
-elif hostCPU == "i386":
-  const AndroidArchName = "i686"
-elif hostCPU == "amd64":
-  const AndroidArchName = "x86_64"
+const
+  AndroidApiVersion = 29
+  AndroidCPU = arm64
 
 # Required path variables
 const
@@ -54,7 +59,7 @@ const
 task setupAndroid, "Set up raylib project for Android":
   # Create required temp directories for APK building
   mkDir(ProjectBuildPath / "src/com" / AppCompanyName / AppProductName)
-  mkDir(ProjectBuildPath / "lib" / AndroidArchName)
+  mkDir(ProjectBuildPath / "lib" / AndroidCPU.toArchName)
   mkDir(ProjectBuildPath / "bin")
   mkDir(ProjectBuildPath / "res/drawable-ldpi")
   mkDir(ProjectBuildPath / "res/drawable-mdpi")
@@ -115,9 +120,9 @@ task buildAndroid, "Compile raylib project for Android":
   exec(AndroidBuildTools / "aapt" & " package -f -m -S " & ProjectBuildPath / "res" & " -J " &
       ProjectBuildPath / "src" & " -M " & ProjectBuildPath / "AndroidManifest.xml" & " -I " & androidResourcePath)
   # Compile project code into a shared library: lib/lib{ProjectLibraryName}.so
-  exec("nim c -d:release --os:android --cpu:" & hostCPU & " -d:AndroidApiVersion=" &
+  exec("nim c -d:release --os:android --cpu:" & $AndroidCPU & " -d:AndroidApiVersion=" &
       $AndroidApiVersion & " -d:AndroidNdk=" & AndroidNdk & " -o:" &
-      ProjectBuildPath / "lib" / AndroidArchName / ("lib" & ProjectLibraryName & ".so") & " " & ProjectSourceFile)
+      ProjectBuildPath / "lib" / AndroidCPU.toArchName / ("lib" & ProjectLibraryName & ".so") & " " & ProjectSourceFile)
   # Compile project .java code into .class (Java bytecode)
   exec(JavaHome / "bin/javac" & " -verbose -source 1.8 -target 1.8 -d " & ProjectBuildPath / "obj" &
       " -bootclasspath " & JavaHome / "jre/lib/rt.jar" & " -classpath " & androidResourcePath & ":" &
@@ -138,7 +143,7 @@ task buildAndroid, "Compile raylib project for Android":
       unsignedApkPath & " " & ProjectBuildPath / "bin")
   withDir(ProjectBuildPath):
     exec(AndroidBuildTools / "aapt" & " add " & "bin" / (ProjectName & ".unsigned.apk") & " " &
-        "lib" / AndroidArchName / ("lib" & ProjectLibraryName & ".so"))
+        "lib" / AndroidCPU.toArchName / ("lib" & ProjectLibraryName & ".so"))
   # Create signed APK package using generated Key: bin/{ProjectName}.signed.apk
   exec(JavaHome / "bin/jarsigner" & " -keystore " & ProjectBuildPath / (ProjectName & ".keystore") &
       " -storepass " & AppKeystorePass & " -keypass " & AppKeystorePass &
