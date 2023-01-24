@@ -18,7 +18,7 @@ proc toArchName(x: CpuPlatform): string =
   case x
   of arm: "armeabi-v7a"
   of arm64: "arm64-v8a"
-  of i386: "i686"
+  of i386: "x86"
   of amd64: "x86_64"
 
 # Define Android architecture (armeabi-v7a, arm64-v8a, x86, x86-64) and API version
@@ -123,7 +123,8 @@ task buildAndroid, "Compile raylib project for Android":
   for cpu in AndroidCPUs:
     exec("nim c -d:release --os:android --cpu:" & $cpu & " -d:AndroidApiVersion=" &
         $AndroidApiVersion & " -d:AndroidNdk=" & AndroidNdk & " -o:" &
-        ProjectBuildPath / "lib" / cpu.toArchName / ("lib" & ProjectLibraryName & ".so") & " " & ProjectSourceFile)
+        ProjectBuildPath / "lib" / cpu.toArchName / ("lib" & ProjectLibraryName & ".so") & " --nimcache:" &
+        nimcacheDir() & cpu.toArchName & " " & ProjectSourceFile)
   # Compile project .java code into .class (Java bytecode)
   exec(JavaHome / "bin/javac" & " -verbose -source 1.8 -target 1.8 -d " & ProjectBuildPath / "obj" &
       " -bootclasspath " & JavaHome / "jre/lib/rt.jar" & " -classpath " & androidResourcePath & ":" &
