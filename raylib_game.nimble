@@ -8,7 +8,7 @@ srcDir        = "src"
 # Dependencies
 requires "naylib#78146ca"
 
-import std/[os, strutils, sugar]
+import std/[os, strutils, sequtils]
 
 # Define Android architecture (armeabi-v7a, arm64-v8a, x86, x86-64) and API version
 const AndroidApiVersion = 29
@@ -125,10 +125,9 @@ task buildAndroid, "Compile raylib project for Android":
       ProjectBuildPath / "src/com" / AppCompanyName / AppProductName / "R.java" & " " &
       ProjectBuildPath / "src/com" / AppCompanyName / AppProductName / "NativeLoader.java")
   # Compile .class files into Dalvik executable bytecode (.dex)
-  let classes = collect:
-    for f in listFiles(ProjectBuildPath / "obj/com" / AppCompanyName / AppProductName): quoteShell(f)
+  let classes = map(listFiles(ProjectBuildPath / "obj/com" / AppCompanyName / AppProductName), quoteShell)
   exec(AndroidBuildTools / "d8" & " --release --output " & ProjectBuildPath / "bin" &
-      " " & join(classes, " ") & "--lib " & androidResourcePath)
+      " " & join(classes, " ") & " --lib " & androidResourcePath)
   # Create Android APK package: bin/{ProjectName}.unsigned.apk
   let unsignedApkPath = ProjectBuildPath / "bin" / (ProjectName & ".unsigned.apk")
   let signedApkPath = ProjectBuildPath / "bin" / (ProjectName & ".signed.apk")
