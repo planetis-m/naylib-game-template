@@ -24,7 +24,7 @@ proc toArchName(x: CpuPlatform): string =
 # Define Android architecture (armeabi-v7a, arm64-v8a, x86, x86-64) and API version
 const
   AndroidApiVersion = 29
-  AndroidCPUs = [arm, arm64]
+  AndroidCPUs = [arm64]
 
 # Required path variables
 const
