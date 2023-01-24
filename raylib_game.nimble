@@ -24,7 +24,7 @@ proc toArchName(x: CpuPlatform): string =
 # Define Android architecture (armeabi-v7a, arm64-v8a, x86, x86-64) and API version
 const
   AndroidApiVersion = 29
-  AndroidCPU = arm64
+  AndroidCPUs = [arm, arm64]
 
 # Required path variables
 const
@@ -59,7 +59,7 @@ const
 task setupAndroid, "Set up raylib project for Android":
   # Create required temp directories for APK building
   mkDir(ProjectBuildPath / "src/com" / AppCompanyName / AppProductName)
-  mkDir(ProjectBuildPath / "lib" / AndroidCPU.toArchName)
+  for cpu in AndroidCPUs: mkDir(ProjectBuildPath / "lib" / cpu.toArchName)
   mkDir(ProjectBuildPath / "bin")
   mkDir(ProjectBuildPath / "res/drawable-ldpi")
   mkDir(ProjectBuildPath / "res/drawable-mdpi")
@@ -119,10 +119,11 @@ task buildAndroid, "Compile raylib project for Android":
   let androidResourcePath = AndroidHome / ("platforms/android-" & $AndroidApiVersion) / "android.jar"
   exec(AndroidBuildTools / "aapt" & " package -f -m -S " & ProjectBuildPath / "res" & " -J " &
       ProjectBuildPath / "src" & " -M " & ProjectBuildPath / "AndroidManifest.xml" & " -I " & androidResourcePath)
-  # Compile project code into a shared library: lib/lib{ProjectLibraryName}.so
-  exec("nim c -d:release --os:android --cpu:" & $AndroidCPU & " -d:AndroidApiVersion=" &
-      $AndroidApiVersion & " -d:AndroidNdk=" & AndroidNdk & " -o:" &
-      ProjectBuildPath / "lib" / AndroidCPU.toArchName / ("lib" & ProjectLibraryName & ".so") & " " & ProjectSourceFile)
+  # Compile project code into a shared library: lib/{AndroidArchName}/lib{ProjectLibraryName}.so
+  for cpu in AndroidCPUs:
+    exec("nim c -d:release --os:android --cpu:" & $cpu & " -d:AndroidApiVersion=" &
+        $AndroidApiVersion & " -d:AndroidNdk=" & AndroidNdk & " -o:" &
+        ProjectBuildPath / "lib" / cpu.toArchName / ("lib" & ProjectLibraryName & ".so") & " " & ProjectSourceFile)
   # Compile project .java code into .class (Java bytecode)
   exec(JavaHome / "bin/javac" & " -verbose -source 1.8 -target 1.8 -d " & ProjectBuildPath / "obj" &
       " -bootclasspath " & JavaHome / "jre/lib/rt.jar" & " -classpath " & androidResourcePath & ":" &
@@ -142,8 +143,9 @@ task buildAndroid, "Compile raylib project for Android":
       ProjectBuildPath / "res" & " -A " & ProjectBuildPath / "assets" & " -I " & androidResourcePath & " -F " &
       unsignedApkPath & " " & ProjectBuildPath / "bin")
   withDir(ProjectBuildPath):
-    exec(AndroidBuildTools / "aapt" & " add " & "bin" / (ProjectName & ".unsigned.apk") & " " &
-        "lib" / AndroidCPU.toArchName / ("lib" & ProjectLibraryName & ".so"))
+    for cpu in AndroidCPUs:
+      exec(AndroidBuildTools / "aapt" & " add " & "bin" / (ProjectName & ".unsigned.apk") & " " &
+          "lib" / cpu.toArchName / ("lib" & ProjectLibraryName & ".so"))
   # Create signed APK package using generated Key: bin/{ProjectName}.signed.apk
   exec(JavaHome / "bin/jarsigner" & " -keystore " & ProjectBuildPath / (ProjectName & ".keystore") &
       " -storepass " & AppKeystorePass & " -keypass " & AppKeystorePass &

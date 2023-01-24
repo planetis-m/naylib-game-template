@@ -15,7 +15,7 @@ when defined(android):
   # --cpu:arm64
   --cc:clang
   when hostCPU == "arm":
-    const AndroidTriple = "arm-linux-androideabi"
+    const AndroidTriple = "armv7a-linux-androideabi"
     const AndroidAbiFlags = "-march=armv7-a -mfloat-abi=softfp -mfpu=vfpv3-d16"
   elif hostCPU == "arm64":
     const AndroidTriple = "aarch64-linux-android"
