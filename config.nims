@@ -37,7 +37,7 @@ when defined(android):
       " -I" & AndroidSysroot / "usr/include" / AndroidTriple & " " & AndroidAbiFlags)
   switch("clang.options.linker", "-shared " & AndroidAbiFlags)
 
-  # --define:androidNDK
+  --define:androidNDK
   --mm:orc
   # --threads:off
   --panics:on
