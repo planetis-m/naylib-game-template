@@ -13,6 +13,8 @@ import std/[os, strutils, sequtils]
 type
   CpuPlatform = enum
     arm, arm64, i386, amd64
+  DeviceOrientation = enum
+    portrait, landscape, sensor
 
 proc toArchName(x: CpuPlatform): string =
   case x
@@ -53,7 +55,7 @@ const
   AppIconLdpi = "logo/raylib_36x36.png"
   AppIconMdpi = "logo/raylib_48x48.png"
   AppIconHdpi = "logo/raylib_72x72.png"
-  AppScreenOrientation = "landscape"
+  AppScreenOrientation = landscape
   AppKeystorePass = "raylib"
 
 task setupAndroid, "Set up raylib project for Android":
@@ -96,7 +98,7 @@ public class NativeLoader extends android.app.NativeActivity {
         <activity android:name="com.""" & AppCompanyName & "." & AppProductName & """.NativeLoader"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
             android:configChanges="orientation|keyboardHidden|screenSize"
-            android:screenOrientation="""" & AppScreenOrientation & """" android:launchMode="singleTask"
+            android:screenOrientation="""" & $AppScreenOrientation & """" android:launchMode="singleTask"
             android:clearTaskOnLaunch="true">
             <meta-data android:name="android.app.lib_name" android:value="""" & ProjectLibraryName & """" />
             <intent-filter>
@@ -124,7 +126,7 @@ task buildAndroid, "Compile raylib project for Android":
     exec("nim c -d:release --os:android --cpu:" & $cpu & " -d:AndroidApiVersion=" &
         $AndroidApiVersion & " -d:AndroidNdk=" & AndroidNdk & " -o:" &
         ProjectBuildPath / "lib" / cpu.toArchName / ("lib" & ProjectLibraryName & ".so") & " --nimcache:" &
-        nimcacheDir() & cpu.toArchName & " " & ProjectSourceFile)
+        nimcacheDir() & "_" & $cpu & " " & ProjectSourceFile)
   # Compile project .java code into .class (Java bytecode)
   exec(JavaHome / "bin/javac" & " -verbose -source 1.8 -target 1.8 -d " & ProjectBuildPath / "obj" &
       " -bootclasspath " & JavaHome / "jre/lib/rt.jar" & " -classpath " & androidResourcePath & ":" &
