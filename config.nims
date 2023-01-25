@@ -12,7 +12,6 @@ const AndroidSysroot = AndroidToolchain / "sysroot"
 when defined(android):
   --define:GraphicsApiOpenGlEs2
   --os:android
-  # --cpu:arm64
   --cc:clang
   when hostCPU == "arm":
     const AndroidTriple = "armv7a-linux-androideabi"

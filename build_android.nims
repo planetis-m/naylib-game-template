@@ -116,7 +116,7 @@ task buildAndroid, "Compile raylib project for Android":
     exec("nim c -d:release --os:android --cpu:" & $cpu & " -d:AndroidApiVersion=" &
         $AndroidApiVersion & " -d:AndroidNdk=" & AndroidNdk & " -o:" &
         ProjectBuildPath / "lib" / cpu.toArchName / ("lib" & ProjectLibraryName & ".so") & " --nimcache:" &
-        nimcacheDir() & "_" & $cpu & " " & ProjectSourceFile)
+        nimcacheDir().parentDir / (ProjectName & "_" & $cpu) & " " & ProjectSourceFile)
   # Compile project .java code into .class (Java bytecode)
   exec(JavaHome / "bin/javac" & " -verbose -source 1.8 -target 1.8 -d " & ProjectBuildPath / "obj" &
       " -bootclasspath " & JavaHome / "jre/lib/rt.jar" & " -classpath " & androidResourcePath & ":" &
