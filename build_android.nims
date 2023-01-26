@@ -1,4 +1,4 @@
-import std/[os, strutils, sequtils]
+import std/[os, strutils, sugar]
 
 type
   CpuPlatform = enum
@@ -124,7 +124,9 @@ task buildAndroid, "Compile raylib project for Android":
       ProjectBuildPath / "src/com" / AppCompanyName / AppProductName / "R.java" & " " &
       ProjectBuildPath / "src/com" / AppCompanyName / AppProductName / "NativeLoader.java")
   # Compile .class files into Dalvik executable bytecode (.dex)
-  let classes = map(listFiles(ProjectBuildPath / "obj/com" / AppCompanyName / AppProductName), quoteShell)
+  let classes = collect:
+    for f in listFiles(ProjectBuildPath / "obj/com" / AppCompanyName / AppProductName):
+      if f.endsWith(".class"): quoteShell(f)
   exec(AndroidBuildTools / "d8" & " --release --output " & ProjectBuildPath / "bin" &
       " " & join(classes, " ") & " --lib " & androidResourcePath)
   # Create Android APK package: bin/{ProjectName}.unsigned.apk
