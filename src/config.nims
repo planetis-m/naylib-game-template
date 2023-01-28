@@ -30,6 +30,7 @@ when defined(android):
   switch("clang.path", AndroidToolchain / "bin")
   switch("clang.exe", AndroidTarget & "-clang")
   switch("clang.linkerexe", AndroidTarget & "-clang")
+  switch("clang.cpp.path", AndroidToolchain / "bin")
   switch("clang.cpp.exe", AndroidTarget & "-clang++")
   switch("clang.cpp.linkerexe", AndroidTarget & "-clang++")
   switch("clang.options.always", "--sysroot=" & AndroidSysroot & " -I" & AndroidSysroot / "usr/include" &

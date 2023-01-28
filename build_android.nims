@@ -102,7 +102,7 @@ public class NativeLoader extends android.app.NativeActivity {
   # Generate storekey for APK signing: {ProjectName}.keystore
   let keystorePath = ProjectBuildPath / ProjectName & ".keystore"
   if not fileExists(keystorePath):
-    exec(JavaHome / "bin/keytool -genkeypair -validity 10000 -dname \"CN=" & AppCompanyName &
+    exec(JavaHome / "bin/keytool" & " -genkeypair -validity 10000 -dname \"CN=" & AppCompanyName &
         ",O=Android,C=ES\" -keystore " & keystorePath & " -storepass " & AppKeystorePass &
         " -keypass " & AppKeystorePass & " -alias " & ProjectName & "Key -keyalg RSA")
 
