@@ -34,8 +34,8 @@ when defined(android):
   switch("clang.cpp.exe", AndroidTarget & "-clang++")
   switch("clang.cpp.linkerexe", AndroidTarget & "-clang++")
   switch("clang.options.always", "--sysroot=" & AndroidSysroot & " -I" & AndroidSysroot / "usr/include" &
-      " -I" & AndroidSysroot / "usr/include" / AndroidTriple & " -D__ANDROID__ -D__ANDROID_API__=" &
-      $AndroidApiVersion & " " & AndroidAbiFlags)
+         " -I" & AndroidSysroot / "usr/include" / AndroidTriple & " " & AndroidAbiFlags &
+         " -D__ANDROID__ -D__ANDROID_API__=" & $AndroidApiVersion)
   switch("clang.options.linker", "-shared " & AndroidAbiFlags)
 
   --define:androidNDK
