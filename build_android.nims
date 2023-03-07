@@ -1,3 +1,9 @@
+# raylib build script for Android project (APK building)
+# Copyright (c) 2017-2023 Ramon Santamaria (@raysan5)
+# Converted to nimscript by Antonis Geralis (@planetis-m) in 2023
+# See the file "LICENSE", included in this
+# distribution, for details about the copyright.
+
 import std/[os, strutils, sugar]
 
 type
