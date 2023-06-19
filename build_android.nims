@@ -26,10 +26,10 @@ const
 
 # Required path variables
 const
-  JavaHome = "/usr/lib/jvm/java-19-openjdk"
+  JavaHome = "/usr/lib/jvm/default-runtime"
   AndroidNdk = "/opt/android-ndk"
   AndroidHome = "/opt/android-sdk"
-  AndroidBuildTools = AndroidHome / "build-tools/33.0.1"
+  AndroidBuildTools = AndroidHome / "build-tools/33.0.2"
   AndroidPlatformTools = AndroidHome / "platform-tools"
 
 # Android project configuration variables
