@@ -126,7 +126,7 @@ task buildAndroid, "Compile raylib project for Android":
         ProjectBuildPath / "lib" / cpu.toArchName / ("lib" & ProjectLibraryName & ".so") & " --nimcache:" &
         nimcacheDir().parentDir / (ProjectName & "_" & $cpu) & " " & ProjectSourceFile)
   # Compile project .java code into .class (Java bytecode)
-  exec(JavaHome / "bin/javac" & " -verbose -source 1.8 -target 1.8 -d " & ProjectBuildPath / "obj" &
+  exec(JavaHome / "bin/javac" & " -verbose -source 1.9 -target 1.9 -d " & ProjectBuildPath / "obj" &
       " -bootclasspath " & JavaHome / "jre/lib/rt.jar" & " -classpath " & androidResourcePath & ":" &
       ProjectBuildPath / "obj" & " -sourcepath " & ProjectBuildPath / "src" & " " &
       ProjectBuildPath / "src/com" / AppCompanyName / AppProductName / "R.java" & " " &
