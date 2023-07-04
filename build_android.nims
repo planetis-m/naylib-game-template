@@ -127,8 +127,8 @@ task buildAndroid, "Compile raylib project for Android":
         nimcacheDir().parentDir / (ProjectName & "_" & $cpu) & " " & ProjectSourceFile)
   # Compile project .java code into .class (Java bytecode)
   exec(JavaHome / "bin/javac" & " -verbose --source 11 --target 11 -d " & ProjectBuildPath / "obj" &
-      " --system " & JavaHome & " --class-path " & androidResourcePath & ":" &
-      ProjectBuildPath / "obj" & " -sourcepath " & ProjectBuildPath / "src" & " " &
+      " --system " & JavaHome & " --class-path " & androidResourcePath & (when defined(windows): ";" else: ":") &
+      ProjectBuildPath / "obj" & " --source-path " & ProjectBuildPath / "src" & " " &
       ProjectBuildPath / "src/com" / AppCompanyName / AppProductName / "R.java" & " " &
       ProjectBuildPath / "src/com" / AppCompanyName / AppProductName / "NativeLoader.java")
   # Compile .class files into Dalvik executable bytecode (.dex)
