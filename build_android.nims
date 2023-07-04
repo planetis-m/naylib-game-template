@@ -21,7 +21,7 @@ proc toArchName(x: CpuPlatform): string =
 
 # Define Android architecture (armeabi-v7a, arm64-v8a, x86, x86-64) and API version
 const
-  AndroidApiVersion = 29
+  AndroidApiVersion = 33
   AndroidCPUs = [arm64]
 
 # Required path variables
@@ -126,8 +126,8 @@ task buildAndroid, "Compile raylib project for Android":
         ProjectBuildPath / "lib" / cpu.toArchName / ("lib" & ProjectLibraryName & ".so") & " --nimcache:" &
         nimcacheDir().parentDir / (ProjectName & "_" & $cpu) & " " & ProjectSourceFile)
   # Compile project .java code into .class (Java bytecode)
-  exec(JavaHome / "bin/javac" & " -verbose -source 1.9 -target 1.9 -d " & ProjectBuildPath / "obj" &
-      " -bootclasspath " & JavaHome / "jre/lib/rt.jar" & " -classpath " & androidResourcePath & ":" &
+  exec(JavaHome / "bin/javac" & " -verbose --source 10 --target 10 -d " & ProjectBuildPath / "obj" &
+      " --system " & JavaHome & " --class-path " & androidResourcePath & ":" &
       ProjectBuildPath / "obj" & " -sourcepath " & ProjectBuildPath / "src" & " " &
       ProjectBuildPath / "src/com" / AppCompanyName / AppProductName / "R.java" & " " &
       ProjectBuildPath / "src/com" / AppCompanyName / AppProductName / "NativeLoader.java")

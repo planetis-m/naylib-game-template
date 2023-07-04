@@ -6,6 +6,6 @@ license       = "License"
 srcDir        = "src"
 
 # Dependencies
-requires "naylib#a61c401"
+requires "naylib"
 
 include "build_android.nims"
