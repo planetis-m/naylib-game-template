@@ -90,7 +90,7 @@ public class NativeLoader extends android.app.NativeActivity {
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
         package="com.""" & AppCompanyName & "." & AppProductName & """"
         android:versionCode="""" & $AppVersionCode & "\" android:versionName=\"" & AppVersionName & """" >
-    <uses-sdk android:minSdkVersion="""" & $AndroidApiVersion & """" />
+    <uses-sdk android:minSdkVersion="""" & $AndroidApiVersion & """" android:targetSdkVersion="""" & $AndroidApiVersion & """" />
     <uses-feature android:glEsVersion="0x00020000" android:required="true" />
     <application android:allowBackup="false" android:label="@string/app_name" android:icon="@drawable/icon" >
         <activity android:name="com.""" & AppCompanyName & "." & AppProductName & """.NativeLoader"
@@ -150,11 +150,9 @@ task buildAndroid, "Compile raylib project for Android":
     for cpu in AndroidCPUs:
       exec(AndroidBuildTools / "aapt" & " add " & "bin" / (ProjectName & ".unsigned.apk") & " " &
           "lib" / cpu.toArchName / ("lib" & ProjectLibraryName & ".so"))
-  # Create signed APK package using generated Key: bin/{ProjectName}.signed.apk
-  exec(JavaHome / "bin/jarsigner" & " -keystore " & ProjectBuildPath / (ProjectName & ".keystore") &
-      " -storepass " & AppKeystorePass & " -keypass " & AppKeystorePass &
-      " -signedjar " & signedApkPath &
-      " " & unsignedApkPath & " " & ProjectName & "Key")
   # Create zip-aligned APK package: {ProjectName}.apk
-  exec(AndroidBuildTools / "zipalign" & " -f 4 " & signedApkPath & " " &
-      ProjectName & ".apk")
+  exec(AndroidBuildTools / "zipalign" & " -p -f 4 " & unsignedApkPath & " " & signedApkPath)
+  # Create signed APK package using generated Key: bin/{ProjectName}.signed.apk
+  exec(AndroidBuildTools / "apksigner" & " sign --ks " & ProjectBuildPath / (ProjectName & ".keystore") &
+      " --ks-pass pass:" & AppKeystorePass & " --key-pass pass:" & AppKeystorePass &
+      " --out " & ProjectName & ".apk" & " --ks-key-alias " & ProjectName & "Key" & " " & signedApkPath)
