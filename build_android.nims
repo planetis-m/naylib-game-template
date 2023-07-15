@@ -97,7 +97,8 @@ public class NativeLoader extends android.app.NativeActivity {
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:screenOrientation="""" & $AppScreenOrientation & """" android:launchMode="singleTask"
-            android:clearTaskOnLaunch="true">
+            android:clearTaskOnLaunch="true"
+            android:exported="false">
             <meta-data android:name="android.app.lib_name" android:value="""" & ProjectLibraryName & """" />
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
