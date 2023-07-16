@@ -162,12 +162,12 @@ task compile, "Compile raylib project for Android":
       " --ks-pass pass:" & AppKeystorePass & " --key-pass pass:" & AppKeystorePass &
       " --out " & ProjectName & ".apk" & " --ks-key-alias " & ProjectName & "Key" & " " & alignedApkPath)
 
-task checkinfo, "Check information about the device":
+task info, "Check information about the device":
   # Check supported ABI for the device (armeabi-v7a, arm64-v8a, x86, x86_64)
   echo "Checking supported ABI for the device..."
   exec(AndroidPlatformTools / "adb shell getprop ro.product.cpu.abi")
-  # Check Android API level for the device (31, 32, 33, ...)
-  echo "Checking Android API level for the device..."
+  # Check supported API level for the device (31, 32, 33, ...)
+  echo "Checking supported API level for the device..."
   exec(AndroidPlatformTools / "adb shell getprop ro.build.version.sdk")
 
 task logcat, "Monitorize output log coming from device, only raylib tag":
