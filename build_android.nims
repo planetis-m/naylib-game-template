@@ -97,8 +97,9 @@ public class NativeLoader extends android.app.NativeActivity {
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:screenOrientation="""" & $AppScreenOrientation & """" android:launchMode="singleTask"
+            android:resizeableActivity="false"
             android:clearTaskOnLaunch="true"
-            android:exported="false">
+            android:exported="true">
             <meta-data android:name="android.app.lib_name" android:value="""" & ProjectLibraryName & """" />
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -113,7 +114,7 @@ public class NativeLoader extends android.app.NativeActivity {
   if not fileExists(keystorePath):
     exec(JavaHome / "bin/keytool" & " -genkeypair -validity 10000 -dname \"CN=" & AppCompanyName &
         ",O=Android,C=ES\" -keystore " & keystorePath & " -storepass " & AppKeystorePass &
-        " -keypass " & AppKeystorePass & " -alias " & ProjectName & "Key -keyalg RSA")
+        " -keypass " & AppKeystorePass & " -alias " & ProjectName & "Key -keyalg RSA -keysize 2048")
 
 task buildAndroid, "Compile raylib project for Android":
   # Config project package and resource using AndroidManifest.xml and res/values/strings.xml
