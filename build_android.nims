@@ -139,21 +139,21 @@ task buildAndroid, "Compile raylib project for Android":
       if f.endsWith(".class"): quoteShell(f)
   exec(AndroidBuildTools / "d8" & " --release --output " & ProjectBuildPath / "bin" &
       " " & join(classes, " ") & " --lib " & androidResourcePath)
-  # Create Android APK package: bin/{ProjectName}.unsigned.apk
-  let unsignedApkPath = ProjectBuildPath / "bin" / (ProjectName & ".unsigned.apk")
-  let signedApkPath = ProjectBuildPath / "bin" / (ProjectName & ".signed.apk")
-  rmFile(unsignedApkPath) # fixes rebuilding
-  rmFile(signedApkPath)
+  # Create Android APK package: bin/{ProjectName}.unaligned.apk
+  let unalignedApkPath = ProjectBuildPath / "bin" / (ProjectName & ".unaligned.apk")
+  let alignedApkPath = ProjectBuildPath / "bin" / (ProjectName & ".aligned.apk")
+  rmFile(unalignedApkPath) # fixes rebuilding
+  rmFile(alignedApkPath)
   exec(AndroidBuildTools / "aapt" & " package -f -M " & ProjectBuildPath / "AndroidManifest.xml" & " -S " &
       ProjectBuildPath / "res" & " -A " & ProjectBuildPath / "assets" & " -I " & androidResourcePath & " -F " &
-      unsignedApkPath & " " & ProjectBuildPath / "bin")
+      unalignedApkPath & " " & ProjectBuildPath / "bin")
   withDir(ProjectBuildPath):
     for cpu in AndroidCPUs:
-      exec(AndroidBuildTools / "aapt" & " add " & "bin" / (ProjectName & ".unsigned.apk") & " " &
+      exec(AndroidBuildTools / "aapt" & " add " & "bin" / (ProjectName & ".unaligned.apk") & " " &
           "lib" / cpu.toArchName / ("lib" & ProjectLibraryName & ".so"))
   # Create zip-aligned APK package: {ProjectName}.apk
-  exec(AndroidBuildTools / "zipalign" & " -p -f 4 " & unsignedApkPath & " " & signedApkPath)
-  # Create signed APK package using generated Key: bin/{ProjectName}.signed.apk
+  exec(AndroidBuildTools / "zipalign" & " -p -f 4 " & unalignedApkPath & " " & alignedApkPath)
+  # Create aligned APK package using generated Key: bin/{ProjectName}.aligned.apk
   exec(AndroidBuildTools / "apksigner" & " sign --ks " & ProjectBuildPath / (ProjectName & ".keystore") &
       " --ks-pass pass:" & AppKeystorePass & " --key-pass pass:" & AppKeystorePass &
-      " --out " & ProjectName & ".apk" & " --ks-key-alias " & ProjectName & "Key" & " " & signedApkPath)
+      " --out " & ProjectName & ".apk" & " --ks-key-alias " & ProjectName & "Key" & " " & alignedApkPath)
