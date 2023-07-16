@@ -124,7 +124,7 @@ task buildAndroid, "Compile raylib project for Android":
   # Compile project code into a shared library: lib/{AndroidArchName}/lib{ProjectLibraryName}.so
   for cpu in AndroidCPUs:
     exec("nim c -d:release --os:android --cpu:" & $cpu & " -d:AndroidApiVersion=" &
-        $AndroidApiVersion & " -d:AndroidNdk=" & AndroidNdk & " -o:" &
+        $AndroidApiVersion & " -d:AndroidNdk=" & AndroidNdk & " -d:GraphicsApiOpenGlEs2 -o:" &
         ProjectBuildPath / "lib" / cpu.toArchName / ("lib" & ProjectLibraryName & ".so") & " --nimcache:" &
         nimcacheDir().parentDir / (ProjectName & "_" & $cpu) & " " & ProjectSourceFile)
   # Compile project .java code into .class (Java bytecode)
