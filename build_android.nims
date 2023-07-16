@@ -161,3 +161,13 @@ task buildAndroid, "Compile raylib project for Android":
   exec(AndroidBuildTools / "apksigner" & " sign --ks " & ProjectBuildPath / (ProjectName & ".keystore") &
       " --ks-pass pass:" & AppKeystorePass & " --key-pass pass:" & AppKeystorePass &
       " --out " & ProjectName & ".apk" & " --ks-key-alias " & ProjectName & "Key" & " " & alignedApkPath)
+
+task logcat, "Monitorize output log coming from device, only raylib tag":
+  # Monitorize output log coming from device, only raylib tag
+  exec(AndroidPlatformTools / "adb logcat -c")
+  exec(AndroidPlatformTools / "adb logcat raylib:V *:S")
+
+task deploy, "Install and monitorize raylib project to default emulator/device":
+  # Install and monitorize {ProjectName}.apk to default emulator/device
+  exec(AndroidPlatformTools / "adb install " & ProjectName & ".apk")
+  logcatTask()
