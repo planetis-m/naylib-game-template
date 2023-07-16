@@ -153,7 +153,7 @@ task buildAndroid, "Compile raylib project for Android":
           "lib" / cpu.toArchName / ("lib" & ProjectLibraryName & ".so"))
   # Create zip-aligned APK package: bin/{ProjectName}.aligned.apk
   exec(AndroidBuildTools / "zipalign" & " -p -f 4 " & unalignedApkPath & " " & alignedApkPath)
-  # Create aligned APK package using generated Key: {ProjectName}.apk
+  # Create signed APK package using generated Key: {ProjectName}.apk
   exec(AndroidBuildTools / "apksigner" & " sign --ks " & ProjectBuildPath / (ProjectName & ".keystore") &
       " --ks-pass pass:" & AppKeystorePass & " --key-pass pass:" & AppKeystorePass &
       " --out " & ProjectName & ".apk" & " --ks-key-alias " & ProjectName & "Key" & " " & alignedApkPath)
