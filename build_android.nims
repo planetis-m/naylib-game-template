@@ -9,6 +9,9 @@ import std/[os, strutils, sugar]
 type
   CpuPlatform = enum
     arm, arm64, i386, amd64
+  GlEsVersion = enum
+    openglEs20 = (0x00020000, "GraphicsApiOpenGlEs2")
+    openglEs30 = (0x00030000, "GraphicsApiOpenGlEs3")
   DeviceOrientation = enum
     portrait, landscape, sensor
 
@@ -19,10 +22,11 @@ proc toArchName(x: CpuPlatform): string =
   of i386: "x86"
   of amd64: "x86_64"
 
-# Define Android architecture (armeabi-v7a, arm64-v8a, x86, x86-64) and API version
+# Define Android architecture (armeabi-v7a, arm64-v8a, x86, x86-64), GLES and API version
 const
   AndroidApiVersion = 33
   AndroidCPUs = [arm64]
+  AndroidGlEsVersion = openglEs20
 
 # Required path variables
 const
@@ -91,7 +95,7 @@ public class NativeLoader extends android.app.NativeActivity {
         package="com.""" & AppCompanyName & "." & AppProductName & """"
         android:versionCode="""" & $AppVersionCode & "\" android:versionName=\"" & AppVersionName & """" >
     <uses-sdk android:minSdkVersion="""" & $AndroidApiVersion & """" android:targetSdkVersion="""" & $AndroidApiVersion & """" />
-    <uses-feature android:glEsVersion="0x00020000" android:required="true" />
+    <uses-feature android:glEsVersion="0x""" & toHex(AndroidGlEsVersion.int32) & """" android:required="true" />
     <application android:allowBackup="false" android:label="@string/app_name" android:icon="@drawable/icon" >
         <activity android:name="com.""" & AppCompanyName & "." & AppProductName & """.NativeLoader"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
@@ -124,7 +128,7 @@ task buildAndroid, "Compile raylib project for Android":
   # Compile project code into a shared library: lib/{AndroidArchName}/lib{ProjectLibraryName}.so
   for cpu in AndroidCPUs:
     exec("nim c -d:release --os:android --cpu:" & $cpu & " -d:AndroidApiVersion=" &
-        $AndroidApiVersion & " -d:AndroidNdk=" & AndroidNdk & " -d:GraphicsApiOpenGlEs2 -o:" &
+        $AndroidApiVersion & " -d:AndroidNdk=" & AndroidNdk & " -d:" & $AndroidGlEsVersion & " -o:" &
         ProjectBuildPath / "lib" / cpu.toArchName / ("lib" & ProjectLibraryName & ".so") & " --nimcache:" &
         nimcacheDir().parentDir / (ProjectName & "_" & $cpu) & " " & ProjectSourceFile)
   # Compile project .java code into .class (Java bytecode)
