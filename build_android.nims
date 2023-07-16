@@ -95,7 +95,7 @@ public class NativeLoader extends android.app.NativeActivity {
         package="com.""" & AppCompanyName & "." & AppProductName & """"
         android:versionCode="""" & $AppVersionCode & "\" android:versionName=\"" & AppVersionName & """" >
     <uses-sdk android:minSdkVersion="""" & $AndroidApiVersion & """" android:targetSdkVersion="""" & $AndroidApiVersion & """" />
-    <uses-feature android:glEsVersion="0x""" & toHex(AndroidGlEsVersion.int32) & """" android:required="true" />
+    <uses-feature android:glEsVersion="0x""" & toHex(AndroidGlEsVersion.ord, 8) & """" android:required="true" />
     <application android:allowBackup="false" android:label="@string/app_name" android:icon="@drawable/icon" >
         <activity android:name="com.""" & AppCompanyName & "." & AppProductName & """.NativeLoader"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
