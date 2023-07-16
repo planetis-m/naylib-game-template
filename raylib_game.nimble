@@ -9,3 +9,9 @@ srcDir        = "src"
 requires "naylib"
 
 include "build_android.nims"
+
+task setupAndroid, "":
+  setupTask()
+
+task buildAndroid, "":
+  compileTask()

@@ -60,7 +60,7 @@ const
 
 # mode = ScriptMode.Verbose
 
-task setupAndroid, "Set up raylib project for Android":
+task setup, "Set up raylib project for Android":
   # Create required temp directories for APK building
   mkDir(ProjectBuildPath / "src/com" / AppCompanyName / AppProductName)
   for cpu in AndroidCPUs: mkDir(ProjectBuildPath / "lib" / cpu.toArchName)
@@ -120,7 +120,7 @@ public class NativeLoader extends android.app.NativeActivity {
         ",O=Android,C=ES\" -keystore " & keystorePath & " -storepass " & AppKeystorePass &
         " -keypass " & AppKeystorePass & " -alias " & ProjectName & "Key -keyalg RSA -keysize 2048")
 
-task buildAndroid, "Compile raylib project for Android":
+task compile, "Compile raylib project for Android":
   # Config project package and resource using AndroidManifest.xml and res/values/strings.xml
   let androidResourcePath = AndroidHome / ("platforms/android-" & $AndroidApiVersion) / "android.jar"
   exec(AndroidBuildTools / "aapt" & " package -f -m -S " & ProjectBuildPath / "res" & " -J " &
@@ -161,6 +161,10 @@ task buildAndroid, "Compile raylib project for Android":
   exec(AndroidBuildTools / "apksigner" & " sign --ks " & ProjectBuildPath / (ProjectName & ".keystore") &
       " --ks-pass pass:" & AppKeystorePass & " --key-pass pass:" & AppKeystorePass &
       " --out " & ProjectName & ".apk" & " --ks-key-alias " & ProjectName & "Key" & " " & alignedApkPath)
+
+task checkabi, "Check supported ABI for the device":
+  # Check supported ABI for the device (armeabi-v7a, arm64-v8a, x86, x86_64)
+  exec(AndroidPlatformTools / "adb shell getprop ro.product.cpu.abi")
 
 task logcat, "Monitorize output log coming from device, only raylib tag":
   # Monitorize output log coming from device, only raylib tag
