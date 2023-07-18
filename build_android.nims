@@ -10,8 +10,8 @@ type
   CpuPlatform = enum
     arm, arm64, i386, amd64
   GlEsVersion = enum
-    openglEs20 = "GraphicsApiOpenGlEs2"
-    openglEs30 = "GraphicsApiOpenGlEs3"
+    openglEs20 = (0x20000, "GraphicsApiOpenGlEs2")
+    openglEs30 = (0x30000, "GraphicsApiOpenGlEs3")
   DeviceOrientation = enum
     portrait, landscape, sensor
 
@@ -23,9 +23,7 @@ proc toArchName(x: CpuPlatform): string =
   of amd64: "x86_64"
 
 proc toValue(x: GlEsVersion): string =
-  case x
-  of openglEs20: "0x00020000"
-  of openglEs30: "0x00030000"
+  "0x" & toHex(x.ord, 8)
 
 # Define Android architecture (armeabi-v7a, arm64-v8a, x86, x86-64), GLES and API version
 const
