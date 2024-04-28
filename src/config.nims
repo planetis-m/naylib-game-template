@@ -1,5 +1,5 @@
 import os
-const AndroidApiVersion {.intdefine.} = 29
+const AndroidApiVersion {.intdefine.} = 33
 const AndroidNdk {.strdefine.} = "/opt/android-ndk"
 when defined(windows):
   const AndroidToolchain = AndroidNdk / "toolchains/llvm/prebuilt/windows-x86_64"

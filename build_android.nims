@@ -10,8 +10,8 @@ type
   CpuPlatform = enum
     arm, arm64, i386, amd64
   GlEsVersion = enum
-    openglEs20 = (0x20000, "GraphicsApiOpenGlEs2")
-    openglEs30 = (0x30000, "GraphicsApiOpenGlEs3")
+    openglEs20 = "GraphicsApiOpenGlEs2"
+    openglEs30 = "GraphicsApiOpenGlEs3"
   DeviceOrientation = enum
     portrait, landscape, sensor
 
@@ -23,7 +23,9 @@ proc toArchName(x: CpuPlatform): string =
   of amd64: "x86_64"
 
 proc toValue(x: GlEsVersion): string =
-  "0x" & toHex(x.ord, 8)
+  case x
+  of openglEs20: "0x00020000"
+  of openglEs30: "0x00030000"
 
 # Define Android architecture (armeabi-v7a, arm64-v8a, x86, x86-64), GLES and API version
 const
@@ -36,7 +38,7 @@ const
   JavaHome = "/usr/lib/jvm/default-runtime"
   AndroidNdk = "/opt/android-ndk"
   AndroidHome = "/opt/android-sdk"
-  AndroidBuildTools = AndroidHome / "build-tools/33.0.2"
+  AndroidBuildTools = AndroidHome / "build-tools/34.0.0"
   AndroidPlatformTools = AndroidHome / "platform-tools"
 
 # Android project configuration variables
