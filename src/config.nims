@@ -39,9 +39,8 @@ when defined(android):
   switch("clang.options.linker", "-shared " & AndroidAbiFlags)
 
   --define:androidNDK
-  --mm:orc
-  # --threads:off
-  --panics:on
+  # --mm:orc
+  --panics:on # not strictly needed but good to have
   --define:noSignalHandler
 
 elif defined(emscripten):
@@ -61,10 +60,10 @@ elif defined(emscripten):
     --clang.cpp.exe:emcc
     --clang.cpp.linkerexe:emcc
 
-  --mm:orc
-  --threads:off
+  # --mm:orc
+  --threads:on
   --panics:on
   --define:noSignalHandler
   --passL:"-o raylib_game.html"
   # Use raylib/src/shell.html or raylib/src/minshell.html
-  # --passL:"--shell-file minshell.html"
+  --passL:"--shell-file minshell.html"
