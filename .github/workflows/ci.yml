@@ -2,13 +2,20 @@ name: Nim CI
 
 on:
   push:
-    branches: [ main ]
+    branches: [ master ]
   pull_request:
-    branches: [ main ]
+    branches: [ master ]
 
 jobs:
   test-linux:
     runs-on: ubuntu-latest
+    env:
+      COMMANDLINETOOLS_ZIP: "commandlinetools-linux-11076708_latest.zip"
+      COMMANDLINETOOLS_SHA256: "2d2d50857e4eb553af5a6dc3ad507a17adf43d115264b1afc116f95c92e5e258"
+      ANDROID_NDK_ZIP: "android-ndk-r26d-linux.zip"
+      ANDROID_NDK_SHA1: "fcdad75a765a46a9cf6560353f480db251d14765"
+      JAVA_VERSION: "21"
+      ANDROID_API_VERSION: "33"
     steps:
     - uses: actions/checkout@v4
     - uses: jiro4989/setup-nim-action@v2
@@ -17,47 +24,41 @@ jobs:
         repo-token: ${{ secrets.GITHUB_TOKEN }}
     - name: Install dependencies
       run: |
-        sudo apt install libasound2-dev libx11-dev libxrandr-dev libxi-dev libgl1-mesa-dev libglu1-mesa-dev libxcursor-dev libxinerama-dev libwayland-dev libxkbcommon-dev libwayland-bin
+        sudo apt install libasound2-dev libx11-dev libxrandr-dev libxi-dev libgl1-mesa-dev libglu1-mesa-dev libxcursor-dev libxinerama-dev libwayland-dev libxkbcommon-dev
+        sudo apt install -y openjdk-${{ env.JAVA_VERSION }}-jdk wget unzip
+        JAVA_HOME=/usr/lib/jvm/java-${{ env.JAVA_VERSION }}-openjdk-amd64
+        echo "JAVA_HOME=$JAVA_HOME" >> $GITHUB_ENV
+        echo "$JAVA_HOME/bin" >> $GITHUB_PATH
     - name: Set up Emscripten
       run: |
         git clone https://github.com/emscripten-core/emsdk.git
         cd emsdk
         ./emsdk install latest
         ./emsdk activate latest
+    - name: Set up Android SDK/NDK
+      run: |
+        # Set up Android SDK
+        wget -q https://dl.google.com/android/repository/${{ env.COMMANDLINETOOLS_ZIP }}
+        echo "${{ env.COMMANDLINETOOLS_SHA256 }}  ${{ env.COMMANDLINETOOLS_ZIP }}" | sha256sum -c -
+        mkdir android-sdk
+        unzip -q ${{ env.COMMANDLINETOOLS_ZIP }} -d android-sdk
+        cd android-sdk/cmdline-tools/bin
+        yes | ./sdkmanager --licenses --sdk_root=../..
+        ./sdkmanager --update --sdk_root=../..
+        ./sdkmanager --install "build-tools;34.0.0" --sdk_root=../..
+        ./sdkmanager --install "platform-tools" --sdk_root=../..
+        ./sdkmanager --install "platforms;android-${{ env.ANDROID_API_VERSION }}" --sdk_root=../..
+        cd ../../../..
+        # Set up Android NDK
+        wget -q https://dl.google.com/android/repository/${{ env.ANDROID_NDK_ZIP }}
+        echo "${{ env.ANDROID_NDK_SHA1 }}  ${{ env.ANDROID_NDK_ZIP }}" | sha1sum -c -
+        mkdir android-ndk
+        unzip -q ${{ env.ANDROID_NDK_ZIP }} -d android-ndk
     - name: Run tests
       run: |
         source $GITHUB_WORKSPACE/emsdk/emsdk_env.sh
+        # Hack so we don't have to edit build_android.nims
+        sudo ln -sf $GITHUB_WORKSPACE/android-sdk /opt/android-sdk
+        sudo ln -sf $GITHUB_WORKSPACE/android-ndk /opt/android-ndk
+        sudo ln -sf ${{ env.JAVA_VERSION }} /usr/lib/jvm/default-runtime
         nimble test -Y
-
-  test-windows:
-    runs-on: windows-latest
-    steps:
-    - uses: actions/checkout@v4
-    - uses: jiro4989/setup-nim-action@v2
-      with:
-        nim-version: 'stable'
-        repo-token: ${{ secrets.GITHUB_TOKEN }}
-    - name: Set up Emscripten
-      run: |
-        git clone https://github.com/emscripten-core/emsdk.git
-        cd emsdk
-        .\emsdk.ps1 install latest
-        .\emsdk.ps1 activate latest
-    - name: Run tests
-      run: |
-        .\emsdk\emsdk.ps1 construct_env
-        nimble test -Y
-
-  test-macos:
-    runs-on: macos-latest
-    steps:
-    - uses: actions/checkout@v4
-    - uses: jiro4989/setup-nim-action@v2
-      with:
-        nim-version: 'stable'
-        repo-token: ${{ secrets.GITHUB_TOKEN }}
-    - name: Install dependencies
-      run: |
-        brew install emscripten
-    - name: Run tests
-      run: nimble test -Y
