@@ -37,7 +37,7 @@ const
 const
   JavaHome = when defined(GitHubCI): getEnv("JAVA_HOME") else: "/usr/lib/jvm/default-runtime"
   AndroidNdk = when defined(GitHubCI): getEnv("ANDROID_NDK") else: "/opt/android-ndk"
-  AndroidHome = when defined(GitHubCI): getEnv("ANDROID_SDK") else: "/opt/android-sdk"
+  AndroidHome = when defined(GitHubCI): getEnv("ANDROID_HOME") else: "/opt/android-sdk"
   AndroidBuildTools = AndroidHome / "build-tools/34.0.0"
   AndroidPlatformTools = AndroidHome / "platform-tools"
 

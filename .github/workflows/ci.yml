@@ -31,7 +31,7 @@ jobs:
     - name: Set up Android SDK/NDK
       run: |
         # Set up Android SDK
-        wget -q https://dl.google.com/android/repository/${{ env.COMMANDLINETOOLS_ZIP }}
+        wget -nv https://dl.google.com/android/repository/${{ env.COMMANDLINETOOLS_ZIP }}
         echo "${{ env.COMMANDLINETOOLS_SHA256 }}  ${{ env.COMMANDLINETOOLS_ZIP }}" | sha256sum -c -
         mkdir android-sdk
         unzip -q ${{ env.COMMANDLINETOOLS_ZIP }} -d android-sdk
@@ -43,12 +43,12 @@ jobs:
         ./sdkmanager --install "platforms;android-${{ env.ANDROID_API_VERSION }}" --sdk_root=../..
         cd ../../..
         # Set up Android NDK
-        wget -q https://dl.google.com/android/repository/${{ env.ANDROID_NDK_ZIP }}
+        wget -nv https://dl.google.com/android/repository/${{ env.ANDROID_NDK_ZIP }}
         echo "${{ env.ANDROID_NDK_SHA1 }}  ${{ env.ANDROID_NDK_ZIP }}" | sha1sum -c -
         unzip -q ${{ env.ANDROID_NDK_ZIP }}
         mv android-ndk-r*/ android-ndk
         # Set environment variables
-        echo "ANDROID_SDK=$GITHUB_WORKSPACE/android-sdk" >> $GITHUB_ENV
+        echo "ANDROID_HOME=$GITHUB_WORKSPACE/android-sdk" >> $GITHUB_ENV
         echo "ANDROID_NDK=$GITHUB_WORKSPACE/android-ndk" >> $GITHUB_ENV
     - name: Run tests
       run: |
