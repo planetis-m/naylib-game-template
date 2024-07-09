@@ -1,11 +1,11 @@
 import os
 const AndroidApiVersion {.intdefine.} = 33
 const AndroidNdk {.strdefine.} = "/opt/android-ndk"
-when defined(windows):
+when buildOS == "windows":
   const AndroidToolchain = AndroidNdk / "toolchains/llvm/prebuilt/windows-x86_64"
-elif defined(linux):
+elif buildOS == "linux":
   const AndroidToolchain = AndroidNdk / "toolchains/llvm/prebuilt/linux-x86_64"
-elif defined(macosx):
+elif buildOS == "macosx":
   const AndroidToolchain = AndroidNdk / "toolchains/llvm/prebuilt/darwin-x86_64"
 const AndroidSysroot = AndroidToolchain / "sysroot"
 
@@ -50,7 +50,7 @@ elif defined(emscripten):
   --os:linux
   --cpu:wasm32
   --cc:clang
-  when defined(windows):
+  when buildOS == "windows":
     --clang.exe:emcc.bat
     --clang.linkerexe:emcc.bat
     --clang.cpp.exe:emcc.bat
