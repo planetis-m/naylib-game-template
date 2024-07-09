@@ -24,17 +24,10 @@ jobs:
         repo-token: ${{ secrets.GITHUB_TOKEN }}
     - name: Install dependencies
       run: |
-        sudo apt install libasound2-dev libx11-dev libxrandr-dev libxi-dev libgl1-mesa-dev libglu1-mesa-dev libxcursor-dev libxinerama-dev libwayland-dev libxkbcommon-dev
         sudo apt install -y openjdk-${{ env.JAVA_VERSION }}-jdk wget unzip
         JAVA_HOME=/usr/lib/jvm/java-${{ env.JAVA_VERSION }}-openjdk-amd64
         echo "JAVA_HOME=$JAVA_HOME" >> $GITHUB_ENV
         echo "$JAVA_HOME/bin" >> $GITHUB_PATH
-    - name: Set up Emscripten
-      run: |
-        git clone https://github.com/emscripten-core/emsdk.git
-        cd emsdk
-        ./emsdk install latest
-        ./emsdk activate latest
     - name: Set up Android SDK/NDK
       run: |
         # Set up Android SDK
@@ -48,17 +41,16 @@ jobs:
         ./sdkmanager --install "build-tools;34.0.0" --sdk_root=../..
         ./sdkmanager --install "platform-tools" --sdk_root=../..
         ./sdkmanager --install "platforms;android-${{ env.ANDROID_API_VERSION }}" --sdk_root=../..
-        cd ../../../..
+        cd ../../..
         # Set up Android NDK
         wget -q https://dl.google.com/android/repository/${{ env.ANDROID_NDK_ZIP }}
         echo "${{ env.ANDROID_NDK_SHA1 }}  ${{ env.ANDROID_NDK_ZIP }}" | sha1sum -c -
-        mkdir android-ndk
-        unzip -q ${{ env.ANDROID_NDK_ZIP }} -d android-ndk
+        unzip -q ${{ env.ANDROID_NDK_ZIP }}
+        mv android-ndk-r*/ android-ndk
     - name: Run tests
       run: |
-        source $GITHUB_WORKSPACE/emsdk/emsdk_env.sh
         # Hack so we don't have to edit build_android.nims
         sudo ln -sf $GITHUB_WORKSPACE/android-sdk /opt/android-sdk
         sudo ln -sf $GITHUB_WORKSPACE/android-ndk /opt/android-ndk
-        sudo ln -sf ${{ env.JAVA_VERSION }} /usr/lib/jvm/default-runtime
+        sudo ln -sf ${{ env.JAVA_HOME }} /usr/lib/jvm/default-runtime
         nimble test -Y

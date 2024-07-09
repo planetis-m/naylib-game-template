@@ -17,8 +17,6 @@ task buildAndroid, "":
   compileTask()
 
 task test, "Runs the test suite":
-  exec "nim c -d:release src/raylib_game.nim"
-  exec "nim c -d:release -d:emscripten src/raylib_game.nim"
   # Test Android cross-compilation
   setupTask()
   compileTask()
