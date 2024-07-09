@@ -47,10 +47,10 @@ jobs:
         echo "${{ env.ANDROID_NDK_SHA1 }}  ${{ env.ANDROID_NDK_ZIP }}" | sha1sum -c -
         unzip -q ${{ env.ANDROID_NDK_ZIP }}
         mv android-ndk-r*/ android-ndk
+        # Set environment variables
+        echo "ANDROID_SDK=$GITHUB_WORKSPACE/android-sdk" >> $GITHUB_ENV
+        echo "ANDROID_NDK=$GITHUB_WORKSPACE/android-ndk" >> $GITHUB_ENV
     - name: Run tests
       run: |
-        # Hack so we don't have to edit build_android.nims
-        sudo ln -sf $GITHUB_WORKSPACE/android-sdk /opt/android-sdk
-        sudo ln -sf $GITHUB_WORKSPACE/android-ndk /opt/android-ndk
         sudo ln -sf ${{ env.JAVA_HOME }} /usr/lib/jvm/default-runtime
-        nimble test -Y
+        nimble -d:GitHubCI test -Y
