@@ -1,0 +1,63 @@
+name: Nim CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test-linux:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: jiro4989/setup-nim-action@v2
+      with:
+        nim-version: 'stable'
+        repo-token: ${{ secrets.GITHUB_TOKEN }}
+    - name: Install dependencies
+      run: |
+        sudo apt install libasound2-dev libx11-dev libxrandr-dev libxi-dev libgl1-mesa-dev libglu1-mesa-dev libxcursor-dev libxinerama-dev libwayland-dev libxkbcommon-dev libwayland-bin
+    - name: Set up Emscripten
+      run: |
+        git clone https://github.com/emscripten-core/emsdk.git
+        cd emsdk
+        ./emsdk install latest
+        ./emsdk activate latest
+    - name: Run tests
+      run: |
+        source $GITHUB_WORKSPACE/emsdk/emsdk_env.sh
+        nimble test -Y
+
+  test-windows:
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: jiro4989/setup-nim-action@v2
+      with:
+        nim-version: 'stable'
+        repo-token: ${{ secrets.GITHUB_TOKEN }}
+    - name: Set up Emscripten
+      run: |
+        git clone https://github.com/emscripten-core/emsdk.git
+        cd emsdk
+        .\emsdk.ps1 install latest
+        .\emsdk.ps1 activate latest
+    - name: Run tests
+      run: |
+        .\emsdk\emsdk.ps1 construct_env
+        nimble test -Y
+
+  test-macos:
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: jiro4989/setup-nim-action@v2
+      with:
+        nim-version: 'stable'
+        repo-token: ${{ secrets.GITHUB_TOKEN }}
+    - name: Install dependencies
+      run: |
+        brew install emscripten
+    - name: Run tests
+      run: nimble test -Y

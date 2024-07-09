@@ -64,6 +64,6 @@ elif defined(emscripten):
   --threads:on
   --panics:on
   --define:noSignalHandler
-  --passL:"-o raylib_game.html"
+  --passL:"-o public/raylib_game.html"
   # Use raylib/src/shell.html or raylib/src/minshell.html
-  --passL:"--shell-file minshell.html"
+  --passL:"--shell-file src/minshell.html"
