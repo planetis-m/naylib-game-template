@@ -27,7 +27,7 @@ jobs:
         sudo apt install -y openjdk-${{ env.JAVA_VERSION }}-jdk wget unzip
         JAVA_HOME=/usr/lib/jvm/java-${{ env.JAVA_VERSION }}-openjdk-amd64
         echo "JAVA_HOME=$JAVA_HOME" >> $GITHUB_ENV
-        echo "$JAVA_HOME/bin" >> $GITHUB_PATH
+        echo "${JAVA_HOME}/bin" >> $GITHUB_PATH
     - name: Set up Android SDK/NDK
       run: |
         # Set up Android SDK
@@ -91,21 +91,18 @@ jobs:
         $hash = Get-FileHash "${{ env.COMMANDLINETOOLS_ZIP }}" -Algorithm SHA256
         if ($hash.Hash -ne "${{ env.COMMANDLINETOOLS_SHA256 }}") { throw "SHA256 mismatch for ${{ env.COMMANDLINETOOLS_ZIP }}" }
         Expand-Archive -Path "${{ env.COMMANDLINETOOLS_ZIP }}" -DestinationPath "android-sdk"
-
         # Set ANDROID_HOME environment variable
         $ANDROID_HOME = "${{ github.workspace }}\android-sdk"
         echo "ANDROID_HOME=$ANDROID_HOME" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
-
         Set-Location $ANDROID_HOME\cmdline-tools\bin
         $licenses = @("y", "y", "y", "y", "y", "y", "y", "y")
-        $licenses | sdkmanager --licenses --sdk_root=$ANDROID_HOME
+        $licenses | .\sdkmanager --licenses --sdk_root=$ANDROID_HOME
         .\sdkmanager --update --sdk_root=$ANDROID_HOME
         .\sdkmanager --install "build-tools;34.0.0" --sdk_root=$ANDROID_HOME
         .\sdkmanager --install "platform-tools" --sdk_root=$ANDROID_HOME
         .\sdkmanager --install "platforms;android-${{ env.ANDROID_API_VERSION }}" --sdk_root=$ANDROID_HOME
         # sdkmanager --install extras;google;usb_driver --sdk_root=$ANDROID_HOME
         Set-Location ..\..\..
-
         # Set up Android NDK
         Invoke-WebRequest -Uri "https://dl.google.com/android/repository/${{ env.ANDROID_NDK_ZIP }}" -OutFile "${{ env.ANDROID_NDK_ZIP }}"
         $hash = Get-FileHash "${{ env.ANDROID_NDK_ZIP }}" -Algorithm SHA1
@@ -118,7 +115,6 @@ jobs:
         } else {
           Write-Output "No directory found matching 'android-ndk-r*'."
         }
-
         # Set ANDROID_NDK environment variable
         echo "ANDROID_NDK=${{ github.workspace }}\android-ndk" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
     - name: Run tests
