@@ -95,7 +95,6 @@ jobs:
         # Set ANDROID_HOME environment variable
         echo "ANDROID_HOME=$ANDROID_HOME" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
         Set-Location $ANDROID_HOME\cmdline-tools\bin
-        find . -name "*.txt"
         $licenses = @("y", "y", "y", "y", "y", "y", "y", "y")
         $licenses | .\sdkmanager --licenses --sdk_root=$ANDROID_HOME
         .\sdkmanager --update --sdk_root=$ANDROID_HOME
