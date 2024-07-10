@@ -33,6 +33,7 @@ jobs:
         # Set up Android SDK
         wget -nv https://dl.google.com/android/repository/${{ env.COMMANDLINETOOLS_ZIP }}
         echo "${{ env.COMMANDLINETOOLS_SHA256 }}  ${{ env.COMMANDLINETOOLS_ZIP }}" | sha256sum -c -
+        nimble -d:GitHubCI setupBuildEnv
         ANDROID_HOME="${GITHUB_WORKSPACE}/android-sdk"
         unzip -q ${{ env.COMMANDLINETOOLS_ZIP }} -d $ANDROID_HOME
         # Set ANDROID_HOME environment variable
@@ -89,6 +90,7 @@ jobs:
         Invoke-WebRequest -Uri "https://dl.google.com/android/repository/${{ env.COMMANDLINETOOLS_ZIP }}" -OutFile "${{ env.COMMANDLINETOOLS_ZIP }}"
         $hash = Get-FileHash "${{ env.COMMANDLINETOOLS_ZIP }}" -Algorithm SHA256
         if ($hash.Hash -ne "${{ env.COMMANDLINETOOLS_SHA256 }}") { throw "SHA256 mismatch for ${{ env.COMMANDLINETOOLS_ZIP }}" }
+        nimble -d:GitHubCI setupBuildEnv
         $ANDROID_HOME = "${{ github.workspace }}\android-sdk"
         Expand-Archive -Path "${{ env.COMMANDLINETOOLS_ZIP }}" -DestinationPath $ANDROID_HOME
         # Set ANDROID_HOME environment variable

@@ -27,20 +27,17 @@ when defined(android):
     const AndroidAbiFlags = "-march=x86-64"
   const AndroidTarget = AndroidTriple & $AndroidApiVersion
 
-  template toCmd(x: string): string =
-    (when defined(windows): x & ".cmd" else: x)
-
   switch("clang.path", AndroidToolchain / "bin")
-  switch("clang.exe", AndroidTarget & "-clang".toCmd)
-  switch("clang.linkerexe", AndroidTarget & "-clang".toCmd)
+  # switch("clang.exe", AndroidTarget & "-clang")
+  # switch("clang.linkerexe", AndroidTarget & "-clang")
   switch("clang.cpp.path", AndroidToolchain / "bin")
-  switch("clang.cpp.exe", AndroidTarget & "-clang++".toCmd)
-  switch("clang.cpp.linkerexe", AndroidTarget & "-clang++".toCmd)
-  switch("clang.options.always", "--sysroot=" & AndroidSysroot &
+  # switch("clang.cpp.exe", AndroidTarget & "-clang++")
+  # switch("clang.cpp.linkerexe", AndroidTarget & "-clang++")
+  switch("clang.options.always", "--target=" & AndroidTarget & " --sysroot=" & AndroidSysroot &
          " -I" & AndroidSysroot / "usr/include" &
          " -I" & AndroidSysroot / "usr/include" / AndroidTriple & " " & AndroidAbiFlags &
          " -D__ANDROID__ -D__ANDROID_API__=" & $AndroidApiVersion)
-  switch("clang.options.linker", "-shared " & AndroidAbiFlags)
+  switch("clang.options.linker", "--target=" & AndroidTarget & " -shared " & AndroidAbiFlags)
 
   --define:androidNDK
   # --mm:orc
