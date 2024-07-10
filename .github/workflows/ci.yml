@@ -26,7 +26,6 @@ jobs:
       run: |
         sudo apt install -y openjdk-${{ env.JAVA_VERSION }}-jdk wget unzip
         JAVA_HOME=/usr/lib/jvm/java-${{ env.JAVA_VERSION }}-openjdk-amd64
-        sudo ln -sf $JAVA_HOME /usr/lib/jvm/default-runtime
         echo "JAVA_HOME=$JAVA_HOME" >> $GITHUB_ENV
         echo "${JAVA_HOME}/bin" >> $GITHUB_PATH
     - name: Set up Android SDK/NDK
