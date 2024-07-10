@@ -55,60 +55,60 @@ jobs:
         sudo ln -sf ${{ env.JAVA_HOME }} /usr/lib/jvm/default-runtime
         nimble -d:GitHubCI test -Y
 
-  # test-windows:
-  #   runs-on: windows-latest
-  #   env:
-  #     COMMANDLINETOOLS_ZIP: "commandlinetools-win-11076708_latest.zip"
-  #     COMMANDLINETOOLS_SHA256: "4d6931209eebb1bfb7c7e8b240a6a3cb3ab24479ea294f3539429574b1eec862"
-  #     ANDROID_NDK_ZIP: "android-ndk-r26d-windows.zip"
-  #     ANDROID_NDK_SHA1: "c7ea35ffe916082876611da1a6d5618d15430c29"
-  #     JAVA_VERSION: "21"
-  #     ANDROID_API_VERSION: "33"
-  #   steps:
-  #   - uses: actions/checkout@v4
-  #   - uses: jiro4989/setup-nim-action@v2
-  #     with:
-  #       nim-version: 'stable'
-  #       repo-token: ${{ secrets.GITHUB_TOKEN }}
-  #   - name: Install Java
-  #     uses: actions/setup-java@v3
-  #     with:
-  #       java-version: ${{ env.JAVA_VERSION }}
-  #       distribution: 'temurin'
-  #   - name: Set up Android SDK/NDK
-  #     shell: pwsh
-  #     run: |
-  #       # Set up Android SDK
-  #       Invoke-WebRequest -Uri "https://dl.google.com/android/repository/${{ env.COMMANDLINETOOLS_ZIP }}" -OutFile "${{ env.COMMANDLINETOOLS_ZIP }}"
-  #       $hash = Get-FileHash "${{ env.COMMANDLINETOOLS_ZIP }}" -Algorithm SHA256
-  #       if ($hash.Hash -ne "${{ env.COMMANDLINETOOLS_SHA256 }}") { throw "SHA256 mismatch for ${{ env.COMMANDLINETOOLS_ZIP }}" }
-  #       Expand-Archive -Path "${{ env.COMMANDLINETOOLS_ZIP }}" -DestinationPath "android-sdk"
-  #       $env:PATH += ";${{ github.workspace }}\android-sdk\cmdline-tools\bin"
-  #
-  #       $licenses = @("y", "y", "y", "y", "y", "y", "y", "y")
-  #       $licenses | sdkmanager --licenses --sdk_root="${{ github.workspace }}\android-sdk"
-  #
-  #       sdkmanager --update --sdk_root="${{ github.workspace }}\android-sdk"
-  #       sdkmanager --install "build-tools;34.0.0" --sdk_root="${{ github.workspace }}\android-sdk"
-  #       sdkmanager --install "platform-tools" --sdk_root="${{ github.workspace }}\android-sdk"
-  #       sdkmanager --install "platforms;android-${{ env.ANDROID_API_VERSION }}" --sdk_root="${{ github.workspace }}\android-sdk"
-  #
-  #       # Set up Android NDK
-  #       Invoke-WebRequest -Uri "https://dl.google.com/android/repository/${{ env.ANDROID_NDK_ZIP }}" -OutFile "${{ env.ANDROID_NDK_ZIP }}"
-  #       $hash = Get-FileHash "${{ env.ANDROID_NDK_ZIP }}" -Algorithm SHA1
-  #       if ($hash.Hash -ne "${{ env.ANDROID_NDK_SHA1 }}") { throw "SHA1 mismatch for ${{ env.ANDROID_NDK_ZIP }}" }
-  #       Expand-Archive -Path "${{ env.ANDROID_NDK_ZIP }}" -DestinationPath "."
-  #       $ndkDir = Get-ChildItem -Path "." -Filter "android-ndk-r*" -Directory
-  #       # Check if the directory exists and rename it
-  #       if ($ndkDir) {
-  #         Rename-Item -Path $ndkDir.FullName -NewName "android-ndk"
-  #       } else {
-  #         Write-Output "No directory found matching 'android-ndk-r*'."
-  #       }
-  #
-  #       # Set environment variables
-  #       echo "ANDROID_HOME=${{ github.workspace }}\android-sdk" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
-  #       echo "ANDROID_NDK=${{ github.workspace }}\android-ndk" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
-  #   - name: Run tests
-  #     run: |
-  #       nimble -d:GitHubCI test -Y
+  test-windows:
+    runs-on: windows-latest
+    env:
+      COMMANDLINETOOLS_ZIP: "commandlinetools-win-11076708_latest.zip"
+      COMMANDLINETOOLS_SHA256: "4d6931209eebb1bfb7c7e8b240a6a3cb3ab24479ea294f3539429574b1eec862"
+      ANDROID_NDK_ZIP: "android-ndk-r26d-windows.zip"
+      ANDROID_NDK_SHA1: "c7ea35ffe916082876611da1a6d5618d15430c29"
+      JAVA_VERSION: "21"
+      ANDROID_API_VERSION: "33"
+    steps:
+    - uses: actions/checkout@v4
+    - uses: jiro4989/setup-nim-action@v2
+      with:
+        nim-version: 'stable'
+        repo-token: ${{ secrets.GITHUB_TOKEN }}
+    - name: Install Java
+      uses: actions/setup-java@v3
+      with:
+        java-version: ${{ env.JAVA_VERSION }}
+        distribution: 'temurin'
+    - name: Set up Android SDK/NDK
+      shell: pwsh
+      run: |
+        # Set up Android SDK
+        Invoke-WebRequest -Uri "https://dl.google.com/android/repository/${{ env.COMMANDLINETOOLS_ZIP }}" -OutFile "${{ env.COMMANDLINETOOLS_ZIP }}"
+        $hash = Get-FileHash "${{ env.COMMANDLINETOOLS_ZIP }}" -Algorithm SHA256
+        if ($hash.Hash -ne "${{ env.COMMANDLINETOOLS_SHA256 }}") { throw "SHA256 mismatch for ${{ env.COMMANDLINETOOLS_ZIP }}" }
+        Expand-Archive -Path "${{ env.COMMANDLINETOOLS_ZIP }}" -DestinationPath "android-sdk"
+        $env:PATH += ";${{ github.workspace }}\android-sdk\cmdline-tools\bin"
+
+        $licenses = @("y", "y", "y", "y", "y", "y", "y", "y")
+        $licenses | sdkmanager --licenses --sdk_root="${{ github.workspace }}\android-sdk"
+
+        sdkmanager --update --sdk_root="${{ github.workspace }}\android-sdk"
+        sdkmanager --install "build-tools;34.0.0" --sdk_root="${{ github.workspace }}\android-sdk"
+        sdkmanager --install "platform-tools" --sdk_root="${{ github.workspace }}\android-sdk"
+        sdkmanager --install "platforms;android-${{ env.ANDROID_API_VERSION }}" --sdk_root="${{ github.workspace }}\android-sdk"
+
+        # Set up Android NDK
+        Invoke-WebRequest -Uri "https://dl.google.com/android/repository/${{ env.ANDROID_NDK_ZIP }}" -OutFile "${{ env.ANDROID_NDK_ZIP }}"
+        $hash = Get-FileHash "${{ env.ANDROID_NDK_ZIP }}" -Algorithm SHA1
+        if ($hash.Hash -ne "${{ env.ANDROID_NDK_SHA1 }}") { throw "SHA1 mismatch for ${{ env.ANDROID_NDK_ZIP }}" }
+        Expand-Archive -Path "${{ env.ANDROID_NDK_ZIP }}" -DestinationPath "."
+        $ndkDir = Get-ChildItem -Path "." -Filter "android-ndk-r*" -Directory
+        # Check if the directory exists and rename it
+        if ($ndkDir) {
+          Rename-Item -Path $ndkDir.FullName -NewName "android-ndk"
+        } else {
+          Write-Output "No directory found matching 'android-ndk-r*'."
+        }
+
+        # Set environment variables
+        echo "ANDROID_HOME=${{ github.workspace }}\android-sdk" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+        echo "ANDROID_NDK=${{ github.workspace }}\android-ndk" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+    - name: Run tests
+      run: |
+        nimble -d:GitHubCI test -Y

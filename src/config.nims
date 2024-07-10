@@ -28,15 +28,16 @@ when defined(android):
   const AndroidTarget = AndroidTriple & $AndroidApiVersion
 
   switch("clang.path", AndroidToolchain / "bin")
-  switch("clang.exe", AndroidTarget & "-clang")
-  switch("clang.linkerexe", AndroidTarget & "-clang")
+  # switch("clang.exe", AndroidTarget & "-clang")
+  # switch("clang.linkerexe", AndroidTarget & "-clang")
   switch("clang.cpp.path", AndroidToolchain / "bin")
-  switch("clang.cpp.exe", AndroidTarget & "-clang++")
-  switch("clang.cpp.linkerexe", AndroidTarget & "-clang++")
-  switch("clang.options.always", "--sysroot=" & AndroidSysroot & " -I" & AndroidSysroot / "usr/include" &
+  # switch("clang.cpp.exe", AndroidTarget & "-clang++")
+  # switch("clang.cpp.linkerexe", AndroidTarget & "-clang++")
+  switch("clang.options.always", "--target=" & AndroidTarget & " --sysroot=" & AndroidSysroot &
+         " -I" & AndroidSysroot / "usr/include" &
          " -I" & AndroidSysroot / "usr/include" / AndroidTriple & " " & AndroidAbiFlags &
          " -D__ANDROID__ -D__ANDROID_API__=" & $AndroidApiVersion)
-  switch("clang.options.linker", "-shared " & AndroidAbiFlags)
+  switch("clang.options.linker", "--target=" & AndroidTarget & " -shared " & AndroidAbiFlags)
 
   --define:androidNDK
   # --mm:orc
