@@ -146,7 +146,7 @@ task compile, "Compile raylib project for Android":
   let classes = collect:
     for f in listFiles(ProjectBuildPath / "obj/com" / AppCompanyName / AppProductName):
       if f.endsWith(".class"): quoteShell(f)
-  exec(AndroidBuildTools / (when buildOS == "windows": "d8.bat" else: "d8") &
+  exec(AndroidBuildTools / (when defined(windows): "d8.bat" else: "d8") &
       " --release --output " & ProjectBuildPath / "bin" &
       " " & join(classes, " ") & " --lib " & androidResourcePath)
   # Create Android APK package: bin/{ProjectName}.unaligned.apk
@@ -164,7 +164,7 @@ task compile, "Compile raylib project for Android":
   # Create zip-aligned APK package: bin/{ProjectName}.aligned.apk
   exec(AndroidBuildTools / "zipalign" & " -p -f 4 " & unalignedApkPath & " " & alignedApkPath)
   # Create signed APK package using generated Key: {ProjectName}.apk
-  exec(AndroidBuildTools / (when buildOS == "windows": "apksigner.bat" else: "apksigner") &
+  exec(AndroidBuildTools / (when defined(windows): "apksigner.bat" else: "apksigner") &
       " sign --ks " & ProjectBuildPath / (ProjectName & ".keystore") &
       " --ks-pass pass:" & AppKeystorePass & " --key-pass pass:" & AppKeystorePass &
       " --out " & ProjectName & ".apk" & " --ks-key-alias " & ProjectName & "Key" & " " & alignedApkPath)

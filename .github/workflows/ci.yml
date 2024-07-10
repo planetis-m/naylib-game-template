@@ -54,6 +54,12 @@ jobs:
       run: |
         sudo ln -sf ${{ env.JAVA_HOME }} /usr/lib/jvm/default-runtime
         nimble -d:GitHubCI test -Y
+    - name: Upload APK artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: raylib-game-apk
+        path: ${{ github.workspace }}/raylib_game.apk
+        if-no-files-found: error
 
   test-windows:
     runs-on: windows-latest
@@ -112,3 +118,9 @@ jobs:
     - name: Run tests
       run: |
         nimble -d:GitHubCI test -Y
+    - name: Upload APK artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: raylib-game-apk-windows
+        path: ${{ github.workspace }}\raylib_game.apk
+        if-no-files-found: error
