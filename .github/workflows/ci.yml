@@ -26,6 +26,7 @@ jobs:
       run: |
         sudo apt install -y openjdk-${{ env.JAVA_VERSION }}-jdk wget unzip
         JAVA_HOME=/usr/lib/jvm/java-${{ env.JAVA_VERSION }}-openjdk-amd64
+        sudo ln -sf $JAVA_HOME /usr/lib/jvm/default-runtime
         echo "JAVA_HOME=$JAVA_HOME" >> $GITHUB_ENV
         echo "${JAVA_HOME}/bin" >> $GITHUB_PATH
     - name: Set up Android SDK/NDK
@@ -48,12 +49,12 @@ jobs:
         wget -nv https://dl.google.com/android/repository/${{ env.ANDROID_NDK_ZIP }}
         echo "${{ env.ANDROID_NDK_SHA1 }}  ${{ env.ANDROID_NDK_ZIP }}" | sha1sum -c -
         unzip -q ${{ env.ANDROID_NDK_ZIP }}
-        mv android-ndk-r*/ android-ndk
+        ANDROID_NDK="${GITHUB_WORKSPACE}/android-ndk"
+        mv android-ndk-r*/ $ANDROID_NDK
         # Set ANDROID_NDK environment variable
-        echo "ANDROID_NDK=${GITHUB_WORKSPACE}/android-ndk" >> $GITHUB_ENV
+        echo "ANDROID_NDK=$ANDROID_NDK" >> $GITHUB_ENV
     - name: Run tests
       run: |
-        sudo ln -sf ${{ env.JAVA_HOME }} /usr/lib/jvm/default-runtime
         nimble -d:GitHubCI test -Y
     - name: Upload APK artifact
       uses: actions/upload-artifact@v4
@@ -100,22 +101,23 @@ jobs:
         .\sdkmanager --install "build-tools;34.0.0" --sdk_root=$ANDROID_HOME
         .\sdkmanager --install "platform-tools" --sdk_root=$ANDROID_HOME
         .\sdkmanager --install "platforms;android-${{ env.ANDROID_API_VERSION }}" --sdk_root=$ANDROID_HOME
-        # sdkmanager --install extras;google;usb_driver --sdk_root=$ANDROID_HOME
+        # .\sdkmanager --install extras;google;usb_driver --sdk_root=$ANDROID_HOME
         Set-Location ..\..\..
         # Set up Android NDK
         Invoke-WebRequest -Uri "https://dl.google.com/android/repository/${{ env.ANDROID_NDK_ZIP }}" -OutFile "${{ env.ANDROID_NDK_ZIP }}"
         $hash = Get-FileHash "${{ env.ANDROID_NDK_ZIP }}" -Algorithm SHA1
         if ($hash.Hash -ne "${{ env.ANDROID_NDK_SHA1 }}") { throw "SHA1 mismatch for ${{ env.ANDROID_NDK_ZIP }}" }
         Expand-Archive -Path "${{ env.ANDROID_NDK_ZIP }}" -DestinationPath "."
+        $ANDROID_NDK = "${{ github.workspace }}\android-ndk"
         $ndkDir = Get-ChildItem -Path "." -Filter "android-ndk-r*" -Directory
         # Check if the directory exists and rename it
         if ($ndkDir) {
-          Rename-Item -Path $ndkDir.FullName -NewName "android-ndk"
+          Rename-Item -Path $ndkDir.FullName -NewName $ANDROID_NDK
         } else {
           Write-Output "No directory found matching 'android-ndk-r*'."
         }
         # Set ANDROID_NDK environment variable
-        echo "ANDROID_NDK=${{ github.workspace }}\android-ndk" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+        echo "ANDROID_NDK=$ANDROID_NDK" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
     - name: Run tests
       run: |
         nimble -d:GitHubCI test -Y
