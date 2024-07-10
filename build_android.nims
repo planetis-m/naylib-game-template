@@ -64,7 +64,7 @@ const
   AppScreenOrientation = landscape
   AppKeystorePass = "raylib"
 
-mode = ScriptMode.Verbose
+# mode = ScriptMode.Verbose
 
 task setup, "Set up raylib project for Android":
   # Create required temp directories for APK building
@@ -137,11 +137,6 @@ task compile, "Compile raylib project for Android":
         " -d:AndroidNdk=" & AndroidNdk & " -d:" & $AndroidGlEsVersion &
         " -o:" & ProjectBuildPath / "lib" / cpu.toArchName / ("lib" & ProjectLibraryName & ".so") &
         " --nimcache:" & nimcacheDir().parentDir / (ProjectName & "_" & $cpu) & " " & ProjectSourceFile)
-  for f in listFiles(ProjectBuildPath):
-    echo f
-  echo "inside lib"
-  for f in listFiles(ProjectBuildPath / "lib" / AndroidCPUs[0].toArchName):
-    echo f
   # Compile project .java code into .class (Java bytecode)
   exec(JavaHome / "bin/javac" & " -verbose --source 11 --target 11 -d " & ProjectBuildPath / "obj" &
       " --system " & JavaHome & " --class-path " & androidResourcePath & (when defined(windows): ";" else: ":") &
