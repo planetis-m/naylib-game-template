@@ -32,13 +32,6 @@ proc verifySha1(filename, expected: string) =
 template toBat(x: string): string =
   (when defined(windows): x & ".bat" else: x)
 
-# Environment variables
-const
-  JavaHome = when defined(GitHubCI): getEnv"JAVA_HOME" else: "/usr/lib/jvm/default-runtime"
-  AndroidNdk = (when defined(GitHubCI): getEnv"GITHUB_WORKSPACE" else: thisDir()) / "android-ndk"
-  AndroidHome = (when defined(GitHubCI): getEnv"GITHUB_WORKSPACE" else: thisDir()) / "android-sdk"
-  AndroidApiVersion = 33
-
 when defined(windows):
   const
     CommandLineToolsZip = "commandlinetools-windows-11076708_latest.zip"

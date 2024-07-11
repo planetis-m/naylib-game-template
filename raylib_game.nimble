@@ -8,8 +8,8 @@ srcDir        = "src"
 # Dependencies
 requires "naylib"
 
-include "setup_build_env.nims"
 include "build_android.nims"
+include "setup_build_env.nims"
 
 task setupAndroid, "":
   setupTask()
