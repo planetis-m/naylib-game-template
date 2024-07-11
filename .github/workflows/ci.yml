@@ -23,9 +23,6 @@ jobs:
         JAVA_HOME=/usr/lib/jvm/java-${{ env.JAVA_VERSION }}-openjdk-amd64
         echo "JAVA_HOME=$JAVA_HOME" >> $GITHUB_ENV
         echo "${JAVA_HOME}/bin" >> $GITHUB_PATH
-    - name: Set up Android SDK/NDK
-      run: |
-        nim setupBuildEnv -d:GitHubCI setup_build_env.nims
     - name: Run tests
       run: |
         nimble -d:GitHubCI test -Y
@@ -51,11 +48,9 @@ jobs:
       with:
         java-version: ${{ env.JAVA_VERSION }}
         distribution: 'temurin'
-    - name: Set up Android SDK/NDK
-      shell: pwsh
+    - name: Install wget for Windows
       run: |
         choco install wget
-        nim setupBuildEnv -d:GitHubCI setup_build_env.nims
     - name: Run tests
       run: |
         nimble -d:GitHubCI test -Y

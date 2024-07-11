@@ -7,7 +7,8 @@ srcDir        = "src"
 
 # Dependencies
 requires "naylib"
-mode = ScriptMode.Verbose
+
+include "setup_build_env.nims"
 include "build_android.nims"
 
 task setupAndroid, "":
@@ -18,5 +19,6 @@ task buildAndroid, "":
 
 task test, "Runs the test suite":
   # Test Android cross-compilation
+  setupBuildEnvTask()
   setupTask()
   compileTask()

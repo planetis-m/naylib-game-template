@@ -37,11 +37,20 @@ const
   JavaHome = when defined(GitHubCI): getEnv"JAVA_HOME" else: "/usr/lib/jvm/default-runtime"
   AndroidNdk = (when defined(GitHubCI): getEnv"GITHUB_WORKSPACE" else: thisDir()) / "android-ndk"
   AndroidHome = (when defined(GitHubCI): getEnv"GITHUB_WORKSPACE" else: thisDir()) / "android-sdk"
-  CommandLineToolsZip = "commandlinetools-linux-11076708_latest.zip"
-  CommandLineToolsSha256 = "2d2d50857e4eb553af5a6dc3ad507a17adf43d115264b1afc116f95c92e5e258"
-  AndroidNdkZip = "android-ndk-r26d-linux.zip"
-  AndroidNdkSha1 = "fcdad75a765a46a9cf6560353f480db251d14765"
   AndroidApiVersion = 33
+
+when defined(windows):
+  const
+    CommandLineToolsZip = "commandlinetools-windows-11076708_latest.zip"
+    CommandLineToolsSha256 = "4d6931209eebb1bfb7c7e8b240a6a3cb3ab24479ea294f3539429574b1eec862"
+    AndroidNdkZip = "android-ndk-r26d-windows.zip"
+    AndroidNdkSha1 = "c7ea35ffe916082876611da1a6d5618d15430c29"
+elif defined(linux):
+  const
+    CommandLineToolsZip = "commandlinetools-linux-11076708_latest.zip"
+    CommandLineToolsSha256 = "2d2d50857e4eb553af5a6dc3ad507a17adf43d115264b1afc116f95c92e5e258"
+    AndroidNdkZip = "android-ndk-r26d-linux.zip"
+    AndroidNdkSha1 = "fcdad75a765a46a9cf6560353f480db251d14765"
 
 task setupBuildEnv, "Set up Android SDK/NDK":
   # Set up Android SDK
@@ -49,10 +58,6 @@ task setupBuildEnv, "Set up Android SDK/NDK":
   verifySha256(CommandLineToolsZip, CommandLineToolsSha256)
   myExec("unzip -q " & CommandLineToolsZip & " -d " & AndroidHome, input = "A")
   let sdkmanagerPath = AndroidHome / "cmdline-tools/bin" / "sdkmanager".toBat
-  echo "SDKMANAGER EXISTS: ", fileExists(sdkmanagerPath)
-  echo "home ", dirExists(AndroidHome)
-  echo "bin ", dirExists(AndroidHome / "cmdline-tools/bin")
-  echo "list files ", listFiles(AndroidHome / "cmdline-tools/bin")
   myExec(sdkmanagerPath & " --licenses --sdk_root=" & AndroidHome, input = "y\n".repeat(8))
   exec sdkmanagerPath & " --update --sdk_root=" & AndroidHome
   exec sdkmanagerPath & " --install \"build-tools;34.0.0\" --sdk_root=" & AndroidHome
