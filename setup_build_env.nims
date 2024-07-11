@@ -34,7 +34,7 @@ template toBat(x: string): string =
 
 when defined(windows):
   const
-    CommandLineToolsZip = "commandlinetools-windows-11076708_latest.zip"
+    CommandLineToolsZip = "commandlinetools-win-11076708_latest.zip"
     CommandLineToolsSha256 = "4d6931209eebb1bfb7c7e8b240a6a3cb3ab24479ea294f3539429574b1eec862"
     AndroidNdkZip = "android-ndk-r26d-windows.zip"
     AndroidNdkSha1 = "c7ea35ffe916082876611da1a6d5618d15430c29"
