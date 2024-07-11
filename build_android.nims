@@ -139,7 +139,8 @@ task compile, "Compile raylib project for Android":
         " --nimcache:" & nimcacheDir().parentDir / (ProjectName & "_" & $cpu) & " " & ProjectSourceFile)
   # Compile project .java code into .class (Java bytecode)
   exec(JavaHome / "bin/javac" & " -verbose --source 11 --target 11 -d " & ProjectBuildPath / "obj" &
-      " --system " & JavaHome & " --class-path " & androidResourcePath & (when defined(windows): ";" else: ":") &
+      " --system " & quoteShell(JavaHome) & " --class-path " & androidResourcePath &
+      (when defined(windows): ";" else: ":") &
       ProjectBuildPath / "obj" & " --source-path " & ProjectBuildPath / "src" & " " &
       ProjectBuildPath / "src/com" / AppCompanyName / AppProductName / "R.java" & " " &
       ProjectBuildPath / "src/com" / AppCompanyName / AppProductName / "NativeLoader.java")

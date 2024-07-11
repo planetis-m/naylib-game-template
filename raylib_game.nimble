@@ -16,6 +16,9 @@ requires "naylib"
 #  foreignDep "default-jdk"
 
 # Tasks
+
+# mode = ScriptMode.Verbose
+
 include "build_android.nims"
 include "setup_build_env.nims"
 
