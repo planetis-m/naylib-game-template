@@ -23,9 +23,12 @@ jobs:
         JAVA_HOME=/usr/lib/jvm/java-${{ env.JAVA_VERSION }}-openjdk-amd64
         echo "JAVA_HOME=$JAVA_HOME" >> $GITHUB_ENV
         echo "${JAVA_HOME}/bin" >> $GITHUB_PATH
+    - name: Set up Android SDK/NDK
+      run: |
+        nimble -d:GitHubCI setupBuildEnv -Y
     - name: Run tests
       run: |
-        nimble -d:GitHubCI test -Y
+        nimble -d:GitHubCI test
     - name: Upload APK artifact
       uses: actions/upload-artifact@v4
       with:
@@ -43,17 +46,16 @@ jobs:
       with:
         nim-version: 'stable'
         repo-token: ${{ secrets.GITHUB_TOKEN }}
-    - name: Install Java
-      uses: actions/setup-java@v3
-      with:
-        java-version: ${{ env.JAVA_VERSION }}
-        distribution: 'temurin'
-    - name: Install wget for Windows
+    - name: Install dependencies
       run: |
         choco install wget
+        choco install openjdk --version=${{ env.JAVA_VERSION }}.*
+    - name: Set up Android SDK/NDK
+      run: |
+        nimble -d:GitHubCI setupBuildEnv -Y
     - name: Run tests
       run: |
-        nimble -d:GitHubCI test -Y
+        nimble -d:GitHubCI test
     - name: Upload APK artifact
       uses: actions/upload-artifact@v4
       with:

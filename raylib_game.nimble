@@ -8,6 +8,14 @@ srcDir        = "src"
 # Dependencies
 requires "naylib"
 
+#import std/distros
+#if detectOs(Windows):
+#  foreignDep "openjdk"
+#  foreignDep "wget"
+#elif detectOs(Ubuntu):
+#  foreignDep "default-jdk"
+
+# Tasks
 include "build_android.nims"
 include "setup_build_env.nims"
 
@@ -19,6 +27,5 @@ task buildAndroid, "":
 
 task test, "Runs the test suite":
   # Test Android cross-compilation
-  setupBuildEnvTask()
   setupTask()
   compileTask()
