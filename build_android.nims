@@ -66,7 +66,7 @@ const
 
 # mode = ScriptMode.Verbose
 
-task setup, "Set up raylib project for Android":
+task setupAndroid, "Set up raylib project for Android":
   # Create required temp directories for APK building
   mkDir(ProjectBuildPath / "src/com" / AppCompanyName / AppProductName)
   for cpu in AndroidCPUs: mkDir(ProjectBuildPath / "lib" / cpu.toArchName)
@@ -126,7 +126,7 @@ public class NativeLoader extends android.app.NativeActivity {
         ",O=Android,C=ES\" -keystore " & keystorePath & " -storepass " & AppKeystorePass &
         " -keypass " & AppKeystorePass & " -alias " & ProjectName & "Key -keyalg RSA -keysize 2048")
 
-task compile, "Compile raylib project for Android":
+task buildAndroid, "Build raylib project for Android":
   # Config project package and resource using AndroidManifest.xml and res/values/strings.xml
   let androidResourcePath = AndroidHome / ("platforms/android-" & $AndroidApiVersion) / "android.jar"
   exec(AndroidBuildTools / "aapt" & " package -f -m -S " & ProjectBuildPath / "res" & " -J " &
