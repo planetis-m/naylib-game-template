@@ -1,9 +1,9 @@
 import std/[strutils, os]
 
-mode = ScriptMode.Verbose
+# mode = ScriptMode.Verbose
 
 proc appendToGithubFile(envVar: string, pairs: openarray[(string, string)]) =
-  let filename = getEnv(envVar, "")
+  let filename = getEnv(envVar)
   if filename != "":
     var content = ""
     if fileExists(filename):
@@ -47,7 +47,7 @@ elif defined(linux):
 
 task setupBuildEnv, "Set up Android SDK/NDK":
   # Set up Android SDK
-  exec "wget -nv https://dl.google.com/android/repository/" & CommandLineToolsZip
+  myExec "wget -nv https://dl.google.com/android/repository/" & CommandLineToolsZip, "", cache = "1.0"
   verifySha256(CommandLineToolsZip, CommandLineToolsSha256)
   myExec("unzip -q " & CommandLineToolsZip & " -d " & AndroidHome, input = "A")
   let sdkmanagerPath = AndroidHome / "cmdline-tools/bin" / "sdkmanager".toBat
@@ -59,7 +59,7 @@ task setupBuildEnv, "Set up Android SDK/NDK":
   when not defined(GitHubCI) and defined(windows):
     exec sdkmanagerPath & " --install extras;google;usb_driver --sdk_root=" & AndroidHome
   # Set up Android NDK
-  exec "wget -nv https://dl.google.com/android/repository/" & AndroidNdkZip
+  myExec "wget -nv https://dl.google.com/android/repository/" & AndroidNdkZip, "", cache = "1.0"
   verifySha1(AndroidNdkZip, AndroidNdkSha1)
   myExec("unzip -q " & AndroidNdkZip, input = "A")
   mvDir(thisDir() / "android-ndk-r26d", AndroidNdk)
