@@ -14,7 +14,7 @@ proc appendToGithubFile(envVar: string, pairs: openarray[(string, string)]) =
   else:
     echo envVar, " is not set."
 
-template myExec(command, input: string, cache = "") =
+proc myExec(command, input: string, cache = "") =
   let (output, exitCode) = gorgeEx(command, input, cache)
   echo output
   if exitCode != 0:
@@ -49,9 +49,9 @@ task setupBuildEnv, "Set up Android SDK/NDK":
   # Set up Android SDK
   myExec "wget -nv https://dl.google.com/android/repository/" & CommandLineToolsZip, "", cache = "1.0"
   verifySha256(CommandLineToolsZip, CommandLineToolsSha256)
-  myExec("unzip -q " & CommandLineToolsZip & " -d " & AndroidHome, input = "A")
+  myExec "unzip -q " & CommandLineToolsZip & " -d " & AndroidHome, input = "A"
   let sdkmanagerPath = AndroidHome / "cmdline-tools/bin" / "sdkmanager".toBat
-  myExec(sdkmanagerPath & " --licenses --sdk_root=" & AndroidHome, input = "y\n".repeat(8))
+  myExec sdkmanagerPath & " --licenses --sdk_root=" & AndroidHome, input = "y\n".repeat(8)
   exec sdkmanagerPath & " --update --sdk_root=" & AndroidHome
   exec sdkmanagerPath & " --install \"build-tools;34.0.0\" --sdk_root=" & AndroidHome
   exec sdkmanagerPath & " --install \"platform-tools\" --sdk_root=" & AndroidHome
@@ -61,7 +61,7 @@ task setupBuildEnv, "Set up Android SDK/NDK":
   # Set up Android NDK
   myExec "wget -nv https://dl.google.com/android/repository/" & AndroidNdkZip, "", cache = "1.0"
   verifySha1(AndroidNdkZip, AndroidNdkSha1)
-  myExec("unzip -q " & AndroidNdkZip, input = "A")
+  myExec "unzip -q " & AndroidNdkZip, input = "A"
   mvDir(thisDir() / "android-ndk-r26d", AndroidNdk)
   when defined(GitHubCI):
     appendToGithubFile("GITHUB_ENV", {"ANDROID_HOME": AndroidHome, "ANDROID_NDK": AndroidNdk})

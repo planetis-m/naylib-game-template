@@ -85,32 +85,32 @@ task setupAndroid, "Set up raylib project for Android":
   cpFile(AppIconHdpi, ProjectBuildPath / "res/drawable-hdpi/icon.png")
   cpDir(ProjectResourcesPath, ProjectBuildPath / "assets/resources")
   # Generate NativeLoader.java to load required shared libraries
-  writeFile(ProjectBuildPath / "src/com" / AppCompanyName / AppProductName / "NativeLoader.java",
-      "package com." & AppCompanyName & "." & AppProductName & """;
+  writeFile(ProjectBuildPath / "src/com" / AppCompanyName / AppProductName / "NativeLoader.java", &"""
+package com.{AppCompanyName}.{AppProductName};
 
 public class NativeLoader extends android.app.NativeActivity {
     static {
-        System.loadLibrary("""" & ProjectLibraryName & """");
+        System.loadLibrary("{ProjectLibraryName}");
     }
 }
 """)
   # Generate AndroidManifest.xml with all the required options
-  writeFile(ProjectBuildPath / "AndroidManifest.xml", """
+  writeFile(ProjectBuildPath / "AndroidManifest.xml", &"""
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-        package="com.""" & AppCompanyName & "." & AppProductName & """"
-        android:versionCode="""" & $AppVersionCode & "\" android:versionName=\"" & AppVersionName & """" >
-    <uses-sdk android:minSdkVersion="""" & $AndroidApiVersion & """" android:targetSdkVersion="""" & $AndroidApiVersion & """" />
-    <uses-feature android:glEsVersion="""" & AndroidGlEsVersion.toValue & """" android:required="true" />
+        package="com.{AppCompanyName}.{AppProductName}"
+        android:versionCode="{$AppVersionCode}" android:versionName="{AppVersionName}" >
+    <uses-sdk android:minSdkVersion="{$AndroidApiVersion}" android:targetSdkVersion="{$AndroidApiVersion}" />
+    <uses-feature android:glEsVersion="{AndroidGlEsVersion.toValue}" android:required="true" />
     <application android:allowBackup="false" android:label="@string/app_name" android:icon="@drawable/icon" >
-        <activity android:name="com.""" & AppCompanyName & "." & AppProductName & """.NativeLoader"
+        <activity android:name="com.{AppCompanyName}.{AppProductName}.NativeLoader"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
             android:configChanges="orientation|keyboardHidden|screenSize"
-            android:screenOrientation="""" & $AppScreenOrientation & """" android:launchMode="singleTask"
+            android:screenOrientation="{$AppScreenOrientation}" android:launchMode="singleTask"
             android:resizeableActivity="false"
             android:clearTaskOnLaunch="true"
             android:exported="true">
-            <meta-data android:name="android.app.lib_name" android:value="""" & ProjectLibraryName & """" />
+            <meta-data android:name="android.app.lib_name" android:value="{ProjectLibraryName}" />
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
