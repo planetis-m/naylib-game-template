@@ -79,7 +79,7 @@ task setupAndroid, "Set up raylib project for Android":
   mkDir(ProjectBuildPath / "obj/screens")
   # Copy project required resources: strings.xml, icon.png, assets
   writeFile(ProjectBuildPath / "res/values/strings.xml",
-      "<?xml version='1.0' encoding='utf-8'?>\n<resources><string name='app_name'>" & AppLabelName & "</string></resources>\n")
+      &"<?xml version='1.0' encoding='utf-8'?>\n<resources><string name='app_name'>{AppLabelName}</string></resources>\n")
   cpFile(AppIconLdpi, ProjectBuildPath / "res/drawable-ldpi/icon.png")
   cpFile(AppIconMdpi, ProjectBuildPath / "res/drawable-mdpi/icon.png")
   cpFile(AppIconHdpi, ProjectBuildPath / "res/drawable-hdpi/icon.png")
@@ -88,11 +88,11 @@ task setupAndroid, "Set up raylib project for Android":
   writeFile(ProjectBuildPath / "src/com" / AppCompanyName / AppProductName / "NativeLoader.java", &"""
 package com.{AppCompanyName}.{AppProductName};
 
-public class NativeLoader extends android.app.NativeActivity {
-    static {
+public class NativeLoader extends android.app.NativeActivity {{
+    static {{
         System.loadLibrary("{ProjectLibraryName}");
-    }
-}
+    }}
+}}
 """)
   # Generate AndroidManifest.xml with all the required options
   writeFile(ProjectBuildPath / "AndroidManifest.xml", &"""
