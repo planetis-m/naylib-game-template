@@ -105,7 +105,7 @@ public class NativeLoader extends android.app.NativeActivity {{
     <application android:allowBackup="false" android:label="@string/app_name" android:icon="@drawable/icon" >
         <activity android:name="com.{AppCompanyName}.{AppProductName}.NativeLoader"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
-            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:configChanges="orientation|keyboard|keyboardHidden|screenSize"
             android:screenOrientation="{$AppScreenOrientation}" android:launchMode="singleTask"
             android:resizeableActivity="false"
             android:clearTaskOnLaunch="true"
