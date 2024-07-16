@@ -66,7 +66,7 @@ const
 
 # mode = ScriptMode.Verbose
 
-task setupAndroid, "Set up raylib project for Android":
+task setupAndroid, "Prepare raylib project for Android development":
   # Create required temp directories for APK building
   mkDir(ProjectBuildPath / "src/com" / AppCompanyName / AppProductName)
   for cpu in AndroidCPUs: mkDir(ProjectBuildPath / "lib" / cpu.toArchName)
@@ -126,7 +126,7 @@ public class NativeLoader extends android.app.NativeActivity {{
         ",O=Android,C=ES\" -keystore " & keystorePath & " -storepass " & AppKeystorePass &
         " -keypass " & AppKeystorePass & " -alias " & ProjectName & "Key -keyalg RSA -keysize 2048")
 
-task buildAndroid, "Build raylib project for Android":
+task buildAndroid, "Compile and package raylib project for Android":
   # Config project package and resource using AndroidManifest.xml and res/values/strings.xml
   let androidResourcePath = AndroidHome / ("platforms/android-" & $AndroidApiVersion) / "android.jar"
   exec(AndroidBuildTools / "aapt" & " package -f -m -S " & ProjectBuildPath / "res" & " -J " &
@@ -171,7 +171,7 @@ task buildAndroid, "Build raylib project for Android":
       " --ks-pass pass:" & AppKeystorePass & " --key-pass pass:" & AppKeystorePass &
       " --out " & ProjectName & ".apk" & " --ks-key-alias " & ProjectName & "Key" & " " & alignedApkPath)
 
-task info, "Check information about the device":
+task info, "Retrieve device compatibility information":
   # Check supported ABI for the device (armeabi-v7a, arm64-v8a, x86, x86_64)
   echo "Checking supported ABI for the device..."
   exec(AndroidPlatformTools / "adb shell getprop ro.product.cpu.abi")
@@ -179,12 +179,12 @@ task info, "Check information about the device":
   echo "Checking supported API level for the device..."
   exec(AndroidPlatformTools / "adb shell getprop ro.build.version.sdk")
 
-task logcat, "Monitorize output log coming from device, only raylib tag":
+task logcat, "Display raylib-specific logs from the Android device":
   # Monitorize output log coming from device, only raylib tag
   exec(AndroidPlatformTools / "adb logcat -c")
   exec(AndroidPlatformTools / "adb logcat raylib:V *:S")
 
-task deploy, "Install and monitorize raylib project to default emulator/device":
+task deploy, "Install and monitor raylib project on Android device/emulator":
   # Install and monitorize {ProjectName}.apk to default emulator/device
   exec(AndroidPlatformTools / "adb install " & ProjectName & ".apk")
   logcatTask()
