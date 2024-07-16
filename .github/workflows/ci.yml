@@ -28,7 +28,7 @@ jobs:
         nimble -d:GitHubCI setupBuildEnv -Y
     - name: Run tests
       run: |
-        nimble -d:GitHubCI test
+        nimble -d:GitHubCI testCI
     - name: Upload APK artifact
       uses: actions/upload-artifact@v4
       with:
@@ -58,7 +58,7 @@ jobs:
         nimble -d:GitHubCI setupBuildEnv -Y
     - name: Run tests
       run: |
-        nimble -d:GitHubCI test
+        nimble -d:GitHubCI testCI
     - name: Upload APK artifact
       uses: actions/upload-artifact@v4
       with:

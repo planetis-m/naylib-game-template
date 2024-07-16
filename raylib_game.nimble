@@ -22,7 +22,7 @@ elif detectOs(Ubuntu):
 include "build_android.nims"
 include "setup_build_env.nims"
 
-task test, "Runs the test suite":
+task testCI, "Runs the test suite":
   # Test Android cross-compilation
   setupAndroidTask()
   buildAndroidTask()
