@@ -36,9 +36,9 @@ const
 
 # Required path variables
 const
-  JavaHome = when defined(GitHubCI): getEnv"JAVA_HOME" else: "/usr/lib/jvm/default-runtime"
-  AndroidNdk = when defined(GitHubCI): getEnv"GITHUB_WORKSPACE" / "android-ndk" else: "/opt/android-ndk"
-  AndroidHome = when defined(GitHubCI): getEnv"GITHUB_WORKSPACE" / "android-sdk" else: "/opt/android-sdk"
+  JavaHome = getEnv"JAVA_HOME"
+  AndroidNdk = getEnv"ANDROID_NDK"
+  AndroidHome = getEnv"ANDROID_HOME"
   AndroidBuildTools = AndroidHome / "build-tools/34.0.0"
   AndroidPlatformTools = AndroidHome / "platform-tools"
 

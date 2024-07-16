@@ -66,3 +66,6 @@ task setupBuildEnv, "Set up Android SDK/NDK":
   mvDir(thisDir() / "android-ndk-r26d", AndroidNdk)
   when defined(GitHubCI):
     appendToGithubFile("GITHUB_ENV", {"ANDROID_HOME": AndroidHome, "ANDROID_NDK": AndroidNdk})
+  else:
+    putEnv("ANDROID_HOME", AndroidHome)
+    putEnv("ANDROID_NDK", AndroidNdk)
