@@ -1,3 +1,8 @@
+# This script sets up the build environment for an Android project.
+# Copyright (c) 2024 Antonis Geralis (@planetis-m)
+# See the file "LICENSE", included in this distribution,
+# for details about the copyright.
+
 import std/[strutils, os]
 
 # mode = ScriptMode.Verbose
@@ -36,14 +41,14 @@ when defined(windows):
   const
     CommandLineToolsZip = "commandlinetools-win-11076708_latest.zip"
     CommandLineToolsSha256 = "4d6931209eebb1bfb7c7e8b240a6a3cb3ab24479ea294f3539429574b1eec862"
-    AndroidNdkZip = "android-ndk-r26d-windows.zip"
-    AndroidNdkSha1 = "c7ea35ffe916082876611da1a6d5618d15430c29"
+    AndroidNdkZip = "android-ndk-r27-windows.zip"
+    AndroidNdkSha1 = "0ea2756e6815356831bda3af358cce4cdb6a981e"
 elif defined(linux):
   const
     CommandLineToolsZip = "commandlinetools-linux-11076708_latest.zip"
     CommandLineToolsSha256 = "2d2d50857e4eb553af5a6dc3ad507a17adf43d115264b1afc116f95c92e5e258"
-    AndroidNdkZip = "android-ndk-r26d-linux.zip"
-    AndroidNdkSha1 = "fcdad75a765a46a9cf6560353f480db251d14765"
+    AndroidNdkZip = "android-ndk-r27-linux.zip"
+    AndroidNdkSha1 = "5e5cd517bdb98d7e0faf2c494a3041291e71bdcc"
 
 task setupBuildEnv, "Set up Android SDK and NDK for development":
   # Download the Android SDK Command Line Tools
@@ -64,7 +69,7 @@ task setupBuildEnv, "Set up Android SDK and NDK for development":
     exec sdkmanagerPath & " --install extras;google;usb_driver --sdk_root=" & AndroidHome
   # Download the Android NDK
   myExec "wget -nv https://dl.google.com/android/repository/" & AndroidNdkZip, cache = "1.0"
-  # Verifie the integrity of the downloaded file.
+  # Verify the integrity of the downloaded file.
   verifySha1(AndroidNdkZip, AndroidNdkSha1)
   # Extract and move the NDK to the appropriate directory
   myExec "unzip -q " & AndroidNdkZip, input = "A"

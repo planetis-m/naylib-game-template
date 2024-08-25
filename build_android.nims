@@ -1,4 +1,4 @@
-# raylib build script for Android project (APK building)
+# This script builds an Android application (APK file).
 # Copyright (c) 2017-2023 Ramon Santamaria (@raysan5)
 # Converted to nimscript by Antonis Geralis (@planetis-m) in 2023
 # See the file "LICENSE", included in this distribution,
