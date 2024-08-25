@@ -74,7 +74,7 @@ task setupBuildEnv, "Set up Android SDK and NDK for development":
   # Extract and move the NDK to the appropriate directory
   myExec "unzip -q " & AndroidNdkZip, input = "A"
   # AndroidNdkZip[0..<rfind(AndroidNdkZip, '-')]
-  mvDir(thisDir() / "android-ndk-r26d", AndroidNdk)
+  mvDir(thisDir() / "android-ndk-r27", AndroidNdk)
   # Set up environment variables
   when defined(GitHubCI):
     appendToGithubFile("GITHUB_ENV", {"ANDROID_HOME": AndroidHome, "ANDROID_NDK": AndroidNdk})
