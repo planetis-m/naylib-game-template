@@ -149,8 +149,8 @@ task buildAndroid, "Compile and package raylib project for Android":
     for f in listFiles(ProjectBuildPath / "obj/com" / AppCompanyName / AppProductName):
       if f.endsWith(".class"): quoteShell(f)
   exec(AndroidBuildTools / (when defined(windows): "d8.bat" else: "d8") &
-      " --release --output " & ProjectBuildPath / "bin" &
-      " " & join(classes, " ") & " --lib " & androidResourcePath)
+      " --release --no-desugaring --output " & ProjectBuildPath / "bin" &
+      " " & join(classes, " ")
   # Create Android APK package: bin/{ProjectName}.unaligned.apk
   let unalignedApkPath = ProjectBuildPath / "bin" / (ProjectName & ".unaligned.apk")
   let alignedApkPath = ProjectBuildPath / "bin" / (ProjectName & ".aligned.apk")
