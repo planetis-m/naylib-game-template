@@ -131,8 +131,12 @@ task buildAndroid, "Compile and package raylib project for Android":
   let androidResourcePath = AndroidHome / ("platforms/android-" & $AndroidApiVersion) / "android.jar"
   when defined(windows):
     echo AndroidHome
-    exec "ls " & ProjectBuildPath
-  exec(AndroidBuildTools / "aapt" & " package -f -m -S " & ProjectBuildPath / "res" & " -J " &
+    exec "ls " & AndroidHome
+    echo ProjectBuildPath
+    exec "ls " & AndroidBuildTools
+    echo "nnasfas"
+    exec("ls " & AndroidHome / "build-tools/")
+  exec(AndroidBuildTools / "aapt.bat" & " package -f -m -S " & ProjectBuildPath / "res" & " -J " &
       ProjectBuildPath / "src" & " -M " & ProjectBuildPath / "AndroidManifest.xml" & " -I " & androidResourcePath)
   # Compile project code into a shared library: lib/{AndroidArchName}/lib{ProjectLibraryName}.so
   for cpu in AndroidCPUs:
