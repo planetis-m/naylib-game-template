@@ -39,16 +39,22 @@ template toBat(x: string): string =
 
 when defined(windows):
   const
-    CommandLineToolsZip = "commandlinetools-win-11076708_latest.zip"
-    CommandLineToolsSha256 = "4d6931209eebb1bfb7c7e8b240a6a3cb3ab24479ea294f3539429574b1eec862"
-    AndroidNdkZip = "android-ndk-r27-windows.zip"
-    AndroidNdkSha1 = "0ea2756e6815356831bda3af358cce4cdb6a981e"
+    CommandLineToolsZip = "commandlinetools-win-13114758_latest.zip"
+    CommandLineToolsSha256 = "98b565cb657b012dae6794cefc0f66ae1efb4690c699b78a614b4a6a3505b003"
+    AndroidNdkZip = "android-ndk-r27c-windows.zip"
+    AndroidNdkSha1 = "ac5f7762764b1f15341094e148ad4f847d050c38"
 elif defined(linux):
   const
-    CommandLineToolsZip = "commandlinetools-linux-11076708_latest.zip"
-    CommandLineToolsSha256 = "2d2d50857e4eb553af5a6dc3ad507a17adf43d115264b1afc116f95c92e5e258"
-    AndroidNdkZip = "android-ndk-r27-linux.zip"
-    AndroidNdkSha1 = "5e5cd517bdb98d7e0faf2c494a3041291e71bdcc"
+    CommandLineToolsZip = "commandlinetools-linux-13114758_latest.zip"
+    CommandLineToolsSha256 = "7ec965280a073311c339e571cd5de778b9975026cfcbe79f2b1cdcb1e15317ee"
+    AndroidNdkZip = "android-ndk-r27c-linux.zip"
+    AndroidNdkSha1 = "090e8083a715fdb1a3e402d0763c388abb03fb4e"
+elif defined(macosx):
+  const
+    CommandLineToolsZip = "commandlinetools-mac-13114758_latest.zip"
+    CommandLineToolsSha256 = "5673201e6f3869f418eeed3b5cb6c4be7401502bd0aae1b12a29d164d647a54e"
+    AndroidNdkZip = "android-ndk-r27c-darwin.dmg"
+    AndroidNdkSha1 = "04d8c43eb4e884c4b16bbf7733ac9179a13b7b20"
 
 task setupBuildEnv, "Set up Android SDK and NDK for development":
   # Download the Android SDK Command Line Tools
@@ -72,9 +78,21 @@ task setupBuildEnv, "Set up Android SDK and NDK for development":
   # Verify the integrity of the downloaded file.
   verifySha1(AndroidNdkZip, AndroidNdkSha1)
   # Extract and move the NDK to the appropriate directory
-  myExec "unzip -q " & AndroidNdkZip, input = "A"
+  when defined(macosx):
+    # Create a temporary directory for mounting
+    let tempDir = "/tmp/android-ndk"
+    mkDir tempDir
+    # Mount the DMG file
+    myExec "hdiutil attach " & AndroidNdkZip & " -mountpoint " & tempDir
+    # Copy the contents to the appropriate directory
+    cpDir tempDir / "android-ndk-r27c", thisDir() / "android-ndk-r27c"
+    # Unmount the DMG file
+    myExec "hdiutil detach " & tempDir
+    # Remove the temporary directory
+    rmDir tempDir
+  else: myExec "unzip -q " & AndroidNdkZip, input = "A"
   # AndroidNdkZip[0..<rfind(AndroidNdkZip, '-')]
-  mvDir(thisDir() / "android-ndk-r27", AndroidNdk)
+  mvDir(thisDir() / "android-ndk-r27c", AndroidNdk)
   # Set up environment variables
   when defined(GitHubCI):
     appendToGithubFile("GITHUB_ENV", {"ANDROID_HOME": AndroidHome, "ANDROID_NDK": AndroidNdk})
