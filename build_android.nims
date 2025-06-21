@@ -130,12 +130,7 @@ task buildAndroid, "Compile and package raylib project for Android":
   # Config project package and resource using AndroidManifest.xml and res/values/strings.xml
   let androidResourcePath = AndroidHome / ("platforms/android-" & $AndroidApiVersion) / "android.jar"
   when defined(windows):
-    echo "build tools"
-    exec("ls ", AndroidBuildTools)
-    echo "resource path"
-    exec("ls ", androidResourcePath)
-    echo "build tools"
-    exec("ls ", AndroidHome / "build-tools/")
+    echo getEnv"ANDROID_HOME"
   exec(AndroidBuildTools / "aapt" & " package -f -m -S " & ProjectBuildPath / "res" & " -J " &
       ProjectBuildPath / "src" & " -M " & ProjectBuildPath / "AndroidManifest.xml" & " -I " & androidResourcePath)
   # Compile project code into a shared library: lib/{AndroidArchName}/lib{ProjectLibraryName}.so
