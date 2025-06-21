@@ -91,7 +91,6 @@ task setupBuildEnv, "Set up Android SDK and NDK for development":
     # Remove the temporary directory
     rmDir tempDir
   else: myExec "unzip -q " & AndroidNdkZip, input = "A"
-  myExec "ls"
   # AndroidNdkZip[0..<rfind(AndroidNdkZip, '-')]
   mvDir(thisDir() / "android-ndk-r27c", AndroidNdk)
   # Set up environment variables
