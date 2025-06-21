@@ -66,6 +66,7 @@ task setupBuildEnv, "Set up Android SDK and NDK for development":
   let sdkmanagerPath = AndroidHome / "cmdline-tools/bin" / "sdkmanager".toBat
   # Accept SDK licenses automatically
   myExec sdkmanagerPath & " --licenses --sdk_root=" & AndroidHome, input = "y\n".repeat(8)
+  exec "set SKIP_JDK_VERSION_CHECK=true"
   # Install specific Android SDK components
   exec sdkmanagerPath & " --update --sdk_root=" & AndroidHome
   exec sdkmanagerPath & " --install \"build-tools;34.0.0\" --sdk_root=" & AndroidHome
