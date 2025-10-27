@@ -30,7 +30,7 @@ jobs:
       run: |
         nimble -d:GitHubCI testCI
     - name: Upload APK artifact
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v5
       with:
         name: raylib-game-apk
         path: ${{ github.workspace }}/raylib_game.apk
@@ -60,7 +60,7 @@ jobs:
       run: |
         nimble -d:GitHubCI testCI
     - name: Upload APK artifact
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v5
       with:
         name: raylib-game-apk-windows
         path: ${{ github.workspace }}\raylib_game.apk
